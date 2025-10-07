@@ -72,22 +72,57 @@ local exampleToggle = TabHandles.Elements:Toggle({
     Description = "启用后获得无限体力",
     Default = false,
     Callback = function(Value)
+        -- 常量定义
+        local INFINITE_STAMINA = 9999
+        
+        -- 获取体力模块
+        local Sprinting = GetSprintingModule()
+        if not Sprinting then
+            WindUI:Notify({
+                Title = "错误",
+                Content = "无法找到体力模块！",
+                Duration = 3
+            })
+            return
+        end
+
+        -- 断开之前的连接（如果存在）
+        if connection then
+            connection:Disconnect()
+            connection = nil
+        end
+
         if Value then
+            -- 无限体力模式
+            Sprinting.StaminaLoss = 0
+            Sprinting.StaminaGain = StaminaSettings.InfiniteGain or INFINITE_STAMINA
+
+            -- 持续保持无限体力（防止其他逻辑覆盖）
+            connection = RunService.Heartbeat:Connect(function()
+                if not Value then return end  -- 如果用户中途关闭，立即退出
+                Sprinting.StaminaLoss = 0
+                Sprinting.StaminaGain = StaminaSettings.InfiniteGain or INFINITE_STAMINA
+            end)
+
+            -- 通知和日志
             WindUI:Notify({
                 Title = "功能开启",
                 Content = "无限体力已启用",
                 Duration = 3
             })
             print("无限体力功能已开启")
-            -- 在这里添加无限体力的代码
         else
+            -- 恢复默认体力设置
+            Sprinting.StaminaLoss = StaminaSettings.StaminaLoss or 10
+            Sprinting.StaminaGain = StaminaSettings.StaminaGain or 25
+
+            -- 通知和日志
             WindUI:Notify({
                 Title = "功能关闭",
                 Content = "无限体力已禁用",
                 Duration = 3
             })
             print("无限体力功能已关闭")
-            -- 在这里添加关闭无限体力的代码
         end
     end
 })
@@ -126,7 +161,7 @@ local espToggle = TabHandles.ESP:Toggle({
         local highlights = {}
         
         if Value then
-            -- 开启 ESP
+    
             WindUI:Notify({
                 Title = "透视开启",
                 Content = "敌人透视已启用",
@@ -134,29 +169,27 @@ local espToggle = TabHandles.ESP:Toggle({
             })
             print("敌人透视功能已开启")
             
-            -- 为所有杀手添加高亮（红色）
             for _, killer in workspace.GameAssets.Teams.Killer:GetChildren() do
                 local h = Instance.new("Highlight")
-                h.FillColor = Color3.new(1, 0, 0)  -- 红色
+                h.FillColor = Color3.new(1, 0, 0)  
                 h.FillTransparency = 0
-                h.OutlineColor = Color3.new(1, 1, 1) -- 白色轮廓
+                h.OutlineColor = Color3.new(1, 1, 1) 
                 h.OutlineTransparency = 0
                 h.Parent = killer
                 highlights[killer] = h
             end
             
-            -- 为所有幸存者添加高亮（蓝色）
+            
             for _, survivor in workspace.GameAssets.Teams.Survivor:GetChildren() do
                 local h = Instance.new("Highlight")
-                h.FillColor = Color3.new(0, 0, 1)  -- 蓝色
+                h.FillColor = Color3.new(0, 0, 1)  
                 h.FillTransparency = 0.5
-                h.OutlineColor = Color3.new(1, 1, 1) -- 白色轮廓
+                h.OutlineColor = Color3.new(1, 1, 1) 
                 h.OutlineTransparency = 0
                 h.Parent = survivor
                 highlights[survivor] = h
             end
             
-            -- 设置新加入杀手的自动高亮
             local killerConnection = workspace.GameAssets.Teams.Killer.ChildAdded:Connect(function(killer)
                 local h = Instance.new("Highlight")
                 h.FillColor = Color3.new(1, 0, 0)
@@ -167,7 +200,6 @@ local espToggle = TabHandles.ESP:Toggle({
                 highlights[killer] = h
             end)
             
-            -- 设置新加入幸存者的自动高亮
             local survivorConnection = workspace.GameAssets.Teams.Survivor.ChildAdded:Connect(function(survivor)
                 local h = Instance.new("Highlight")
                 h.FillColor = Color3.new(0, 0, 1)
@@ -178,13 +210,11 @@ local espToggle = TabHandles.ESP:Toggle({
                 highlights[survivor] = h
             end)
             
-            -- 保存连接以便之后断开
             highlights._connections = {
                 killer = killerConnection,
                 survivor = survivorConnection
             }
         else
-            -- 关闭 ESP
             WindUI:Notify({
                 Title = "透视关闭",
                 Content = "敌人透视已禁用",
@@ -192,20 +222,17 @@ local espToggle = TabHandles.ESP:Toggle({
             })
             print("敌人透视功能已关闭")
             
-            -- 移除所有高亮效果
             for target, h in pairs(highlights) do
                 if target ~= "_connections" then
                     h:Destroy()
                 end
             end
             
-            -- 断开自动高亮的连接
             if highlights._connections then
                 highlights._connections.killer:Disconnect()
                 highlights._connections.survivor:Disconnect()
             end
             
-            -- 清空引用
             highlights = {}
         end
     end
