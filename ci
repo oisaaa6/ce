@@ -1,0 +1,335 @@
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Syndromehsh/Lua/refs/heads/main/AlienX/AlienX%20Wind%203.0%20UI.txt"))()
+
+WindUI:Notify({
+    Title = "Blue paint",
+    Content = "死亡之死",
+    Duration = 4
+})
+
+local player = game.Players.LocalPlayer
+
+local Window = WindUI:CreateWindow({
+    Title = "Blue paint<font color='#00FF00'>2.0</font> / 死亡之死",
+    Icon = "rbxassetid://4483362748",
+    IconTransparency = 0.5,
+    Author = "Blue paint",
+    Folder = "Blue paint",
+    Size = UDim2.fromOffset(100, 150),
+    Transparent = true,
+    Theme = "Dark",
+    UserEnabled = true,
+    SideBarWidth = 145,
+    HasOutline = true,
+    User = {
+        Enabled = true,
+        Anonymous = false,
+        Username = player.Name,
+        DisplayName = player.DisplayName,
+        UserId = player.UserId,
+        Thumbnail = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png",
+        Callback = function()
+            WindUI:Notify({
+                Title = "用户信息",
+                Content = "玩家: " .. player.Name .. " (" .. player.DisplayName .. ")",
+                Duration = 3
+            })
+        end
+    }
+})
+
+Window:EditOpenButton({
+    Title = "Blue paint",
+    Icon = "monitor",
+    CornerRadius = UDim.new(3,20),
+    StrokeThickness = 2,
+    Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromHex("FF0000")),
+        ColorSequenceKeypoint.new(0.16, Color3.fromHex("FF7F00")),
+        ColorSequenceKeypoint.new(0.33, Color3.fromHex("FFFF00")),
+        ColorSequenceKeypoint.new(0.5, Color3.fromHex("00FF00")),
+        ColorSequenceKeypoint.new(0.66, Color3.fromHex("0000FF")),
+        ColorSequenceKeypoint.new(0.83, Color3.fromHex("4B0082")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("9400D3"))
+    }),
+    Draggable = true,
+})
+
+local Tabs = {
+    Main = Window:Section({ Title = "主要功能", Opened = true })
+}
+
+local TabHandles = {
+    Elements = Tabs.Main:Tab({ Title = "体力" }),
+    Player = Tabs.Main:Tab({ Title = "玩家" }),
+    ESP = Tabs.Main:Tab({ Title = "透视" }),
+    Other = Tabs.Main:Tab({ Title = "自瞄" }),
+    Anti = Tabs.Main:Tab({ Title = "阻止" })
+}
+
+-- 创建一个开关示例
+local exampleToggle = TabHandles.Elements:Toggle({
+    Title = "无限体力",
+    Description = "启用后获得无限体力",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            WindUI:Notify({
+                Title = "功能开启",
+                Content = "无限体力已启用",
+                Duration = 3
+            })
+            print("无限体力功能已开启")
+            -- 在这里添加无限体力的代码
+        else
+            WindUI:Notify({
+                Title = "功能关闭",
+                Content = "无限体力已禁用",
+                Duration = 3
+            })
+            print("无限体力功能已关闭")
+            -- 在这里添加关闭无限体力的代码
+        end
+    end
+})
+
+-- 更多开关示例
+local speedToggle = TabHandles.Player:Toggle({
+    Title = "速度提升",
+    Description = "增加玩家移动速度",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            WindUI:Notify({
+                Title = "速度提升",
+                Content = "移动速度已增加",
+                Duration = 3
+            })
+            print("速度提升功能已开启")
+        else
+            WindUI:Notify({
+                Title = "速度恢复",
+                Content = "移动速度已恢复正常",
+                Duration = 3
+            })
+            print("速度提升功能已关闭")
+        end
+    end
+})
+
+-- 创建 ESP 开关
+local espToggle = TabHandles.ESP:Toggle({
+    Title = "敌人透视",
+    Description = "显示杀手和幸存者的位置",
+    Default = false,
+    Callback = function(Value)
+        -- 存储所有高亮实例的引用
+        local highlights = {}
+        
+        if Value then
+            -- 开启 ESP
+            WindUI:Notify({
+                Title = "透视开启",
+                Content = "敌人透视已启用",
+                Duration = 3
+            })
+            print("敌人透视功能已开启")
+            
+            -- 为所有杀手添加高亮（红色）
+            for _, killer in workspace.GameAssets.Teams.Killer:GetChildren() do
+                local h = Instance.new("Highlight")
+                h.FillColor = Color3.new(1, 0, 0)  -- 红色
+                h.FillTransparency = 0
+                h.OutlineColor = Color3.new(1, 1, 1) -- 白色轮廓
+                h.OutlineTransparency = 0
+                h.Parent = killer
+                highlights[killer] = h
+            end
+            
+            -- 为所有幸存者添加高亮（蓝色）
+            for _, survivor in workspace.GameAssets.Teams.Survivor:GetChildren() do
+                local h = Instance.new("Highlight")
+                h.FillColor = Color3.new(0, 0, 1)  -- 蓝色
+                h.FillTransparency = 0.5
+                h.OutlineColor = Color3.new(1, 1, 1) -- 白色轮廓
+                h.OutlineTransparency = 0
+                h.Parent = survivor
+                highlights[survivor] = h
+            end
+            
+            -- 设置新加入杀手的自动高亮
+            local killerConnection = workspace.GameAssets.Teams.Killer.ChildAdded:Connect(function(killer)
+                local h = Instance.new("Highlight")
+                h.FillColor = Color3.new(1, 0, 0)
+                h.FillTransparency = 0
+                h.OutlineColor = Color3.new(1, 1, 1)
+                h.OutlineTransparency = 0
+                h.Parent = killer
+                highlights[killer] = h
+            end)
+            
+            -- 设置新加入幸存者的自动高亮
+            local survivorConnection = workspace.GameAssets.Teams.Survivor.ChildAdded:Connect(function(survivor)
+                local h = Instance.new("Highlight")
+                h.FillColor = Color3.new(0, 0, 1)
+                h.FillTransparency = 0.5
+                h.OutlineColor = Color3.new(1, 1, 1)
+                h.OutlineTransparency = 0
+                h.Parent = survivor
+                highlights[survivor] = h
+            end)
+            
+            -- 保存连接以便之后断开
+            highlights._connections = {
+                killer = killerConnection,
+                survivor = survivorConnection
+            }
+        else
+            -- 关闭 ESP
+            WindUI:Notify({
+                Title = "透视关闭",
+                Content = "敌人透视已禁用",
+                Duration = 3
+            })
+            print("敌人透视功能已关闭")
+            
+            -- 移除所有高亮效果
+            for target, h in pairs(highlights) do
+                if target ~= "_connections" then
+                    h:Destroy()
+                end
+            end
+            
+            -- 断开自动高亮的连接
+            if highlights._connections then
+                highlights._connections.killer:Disconnect()
+                highlights._connections.survivor:Disconnect()
+            end
+            
+            -- 清空引用
+            highlights = {}
+        end
+    end
+})
+
+local aimbotToggle = TabHandles.Other:Toggle({
+    Title = "自动瞄准",
+    Description = "启用自动瞄准功能",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            WindUI:Notify({
+                Title = "自瞄开启",
+                Content = "自动瞄准已启用",
+                Duration = 3
+            })
+            print("自动瞄准功能已开启")
+        else
+            WindUI:Notify({
+                Title = "自瞄关闭",
+                Content = "自动瞄准已禁用",
+                Duration = 3
+            })
+            print("自动瞄准功能已关闭")
+        end
+    end
+})
+
+local antiKickToggle = TabHandles.Anti:Toggle({
+    Title = "防踢出",
+    Description = "防止被服务器踢出",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            WindUI:Notify({
+                Title = "防踢开启",
+                Content = "防踢出功能已启用",
+                Duration = 3
+            })
+            print("防踢出功能已开启")
+        else
+            WindUI:Notify({
+                Title = "防踢关闭",
+                Content = "防踢出功能已禁用",
+                Duration = 3
+            })
+            print("防踢出功能已关闭")
+        end
+    end
+})
+
+-- 添加按钮示例
+TabHandles.Elements:Button({
+    Title = "恢复全部体力",
+    Description = "立即恢复所有体力值",
+    Callback = function()
+        WindUI:Notify({
+            Title = "体力恢复",
+            Content = "全部体力已恢复",
+            Duration = 3
+        })
+        print("体力恢复按钮被点击")
+    end
+})
+
+-- 添加滑块示例
+TabHandles.Player:Slider({
+    Title = "速度倍数",
+    Description = "调整移动速度倍数",
+    Default = 1,
+    Min = 1,
+    Max = 10,
+    Callback = function(Value)
+        WindUI:Notify({
+            Title = "速度设置",
+            Content = "速度倍数设置为: " .. Value,
+            Duration = 2
+        })
+        print("速度倍数设置为:", Value)
+    end
+})
+
+-- 添加下拉选择框示例
+TabHandles.ESP:Dropdown({
+    Title = "透视类型",
+    Description = "选择透视显示方式",
+    Default = "方框",
+    Options = {"方框", "射线", "名称", "全部"},
+    Callback = function(Value)
+        WindUI:Notify({
+            Title = "透视类型",
+            Content = "已选择: " .. Value,
+            Duration = 2
+        })
+        print("透视类型设置为:", Value)
+    end
+})
+
+-- 添加颜色选择器示例
+TabHandles.Other:ColorPicker({
+    Title = "自瞄颜色",
+    Description = "选择自动瞄准的显示颜色",
+    Default = Color3.fromRGB(255, 0, 0),
+    Callback = function(Value)
+        WindUI:Notify({
+            Title = "颜色设置",
+            Content = "自瞄颜色已更新",
+            Duration = 2
+        })
+        print("自瞄颜色设置为:", Value)
+    end
+})
+
+-- 添加按键绑定示例
+TabHandles.Anti:Keybind({
+    Title = "快速菜单",
+    Description = "打开/关闭快速菜单",
+    Default = Enum.KeyCode.RightShift,
+    Callback = function(Key)
+        WindUI:Notify({
+            Title = "按键绑定",
+            Content = "菜单键设置为: " .. tostring(Key),
+            Duration = 2
+        })
+        print("菜单键设置为:", Key)
+    end
+})
