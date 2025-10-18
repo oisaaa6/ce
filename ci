@@ -1,4 +1,4 @@
-local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Syndromehsh/Lua/refs/heads/main/AlienX/AlienX%20Wind%203.0%20UI.txt"))()
 
 WindUI:Notify({
     Title = "Blue paint",
@@ -41,7 +41,7 @@ Window:EditOpenButton({
     Title = "Blue paint",
     Icon = "monitor",
     CornerRadius = UDim.new(3,20),
-    StrokeThickness = 114514,
+    StrokeThickness = 2,
     Color = ColorSequence.new({
         ColorSequenceKeypoint.new(0, Color3.fromHex("FF0000")),
         ColorSequenceKeypoint.new(0.16, Color3.fromHex("FF7F00")),
@@ -159,7 +159,6 @@ Tab:AddButton({
     Name = "飞车",
     Callback = function()
      loadstring(game:HttpGet("https://pastebin.com/raw/63T0fkBm"))()
-end)
     end    
 })
 
@@ -528,7 +527,7 @@ Tab:AddButton({
     end
 })
 Tab:AddButton({
-    Name = "动画中心"
+    Name = "动画中心",
     Calback = function()
      loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Animation-Hub/main/Animation%20Gui", true))()
      end
@@ -550,7 +549,7 @@ Tab:AddButton({
 Tab:AddButton({
     Name = "无敌少侠飞行（r15体型）",
     Callback = function()
-    adstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
     end
 })
 
@@ -598,7 +597,7 @@ Tab:AddButton({
 Tab:AddButton({
     Name = "最强战场1",
     Callback = function()
-    loadstring(Game:HttpGet("https://raw.githubusercontent.com/skibiditoiletfan2007/tsbscripts/main/Main"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditoiletfan2007/tsbscripts/main/Main"))()
     end
 })
 
@@ -756,7 +755,7 @@ local Tab = Tabs.Main
 Tab:AddButton({
     Name = "物体单一悬浮",
     Callback = function()
-    oadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/单一物体飞行载自己最终优化版"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/单一物体飞行载自己最终优化版"))()
     end
 })
 
@@ -776,7 +775,7 @@ Tab:AddButton({
 Tab:AddButton({
     Name = "零件破坏",
     Callback = function()
-    adstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/-/main/零件破坏者v2"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/-/main/零件破坏者v2"))()
     end
 })
 
@@ -900,7 +899,7 @@ Tab:AddButton({
 Tab:AddButton({
     Name = "死铁轨3",
     Callback = function()
-    loadstringgameHttpGet('https：//raw.githubusercontent.com/Catto-YFCN/Lunor_Dependencies/refs/heads/main/Loader'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Catto-YFCN/Lunor_Dependencies/refs/heads/main/Loader'))()
     end
 })
 
