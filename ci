@@ -1,4 +1,4 @@
-local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Syndromehsh/Lua/refs/heads/main/AlienX/AlienX%20Wind%203.0%20UI.txt"))()
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
 
 WindUI:Notify({
     Title = "Blue paint",
@@ -54,11 +54,23 @@ Window:EditOpenButton({
     Draggable = true,
 })
 
+-- 修复：统一使用一个Tabs表，避免重复定义
 local Tabs = {
-    Main = Window:Section({ Title = "通用功能", Opened = true })
+    Main = Window:Section({ Title = "通用功能", Opened = true }),
+    OtherScripts = Window:Section({ Title = "其他脚本中心", Opened = true }),
+    FEScripts = Window:Section({ Title = "FE脚本", Opened = true }),
+    StrongestBattlegrounds = Window:Section({ Title = "最强战场", Opened = true }),
+    NightsInForest = Window:Section({ Title = "森林里的99夜", Opened = true }),
+    Doors = Window:Section({ Title = "DOORS", Opened = true }),
+    NaturalDisaster = Window:Section({ Title = "自然灾害", Opened = true }),
+    MuscleLegends = Window:Section({ Title = "力量传奇", Opened = true }),
+    NinjaLegends = Window:Section({ Title = "忍者传奇", Opened = true }),
+    DeadRails = Window:Section({ Title = "死铁轨", Opened = true }),
+    StealBrainrot = Window:Section({ Title = "偷走脑红", Opened = true }),
+    Forsaken = Window:Section({ Title = "被遗弃", Opened = true })
 }
 
--- 修复：使用正确的标签变量
+-- 通用功能标签
 local Tab = Tabs.Main
 
 Tab:AddSlider({
@@ -365,6 +377,10 @@ Tab:AddButton({
     end    
 })
 
+-- 修复：添加Noclip变量声明
+local Noclip = false
+local Stepped
+
 Tab:AddToggle({
     Name = "穿墙",
     Default = false,
@@ -388,6 +404,9 @@ Tab:AddToggle({
             end)
         else
             Noclip = false
+            if Stepped then
+                Stepped:Disconnect()
+            end
         end
     end
 })
@@ -457,11 +476,8 @@ Tab:AddButton({
     end
 })
 
-local Tabs = {
-    Main = Window:Section({ Title = "其他脚本中心", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- 其他脚本中心标签
+local Tab = Tabs.OtherScripts
 
 Tab:AddButton({
     Name = "CyOvO脚本中心",
@@ -504,14 +520,12 @@ Tab:AddButton({
     --脚本要全部复制
 --如果看到了不听劝后果自负
 FengYu_HUB = "殺脚本"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/FengYu-3/FengYu/refs/heads/⭐作者风御/🇨🇳殺脚本🇨🇳"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FengYu-3/FengYu/refs/heads/⭐作者风御/🇨🇨🇳🇳殺脚本🇨🇨🇳🇳"))()
     end
 })
 
-local Tabs = {
-    Main = Window:Section({ Title = "FE脚本", Opened = true })
-}
-local Tab = Tabs.Main
+-- FE脚本标签
+local Tab = Tabs.FEScripts
 
 Tab:AddButton({
     Name = "coolgui",
@@ -520,19 +534,15 @@ Tab:AddButton({
     end
 })
 
-Tab:AddButton({
-    Name = "coolgui",
-    Callback = function()
-    loadstring(game:GetObjects("rbxassetid://8127297852")[1].Source)()
-    end
-})
+-- 修复：删除重复的coolgui按钮，修复动画中心的Callback拼写错误
 Tab:AddButton({
     Name = "动画中心",
-    Calback = function()
+    Callback = function()  -- 修复：Calback -> Callback
      loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Animation-Hub/main/Animation%20Gui", true))()
      end
 })
-    Tab:AddButton({
+
+Tab:AddButton({
     Name = "变玩家（r6体型）",
     Callback = function()
     loadstring(game:HttpGet("https://pastebin.com/raw/XR4sGcgJ"))()
@@ -567,11 +577,8 @@ Tab:AddButton({
     end
 })
 
-local Tabs = {
-    Main = Window:Section({ Title = "最强战场", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- 最强战场标签
+local Tab = Tabs.StrongestBattlegrounds
 
 Tab:AddButton({
     Name = "饿狼火车头动作包",
@@ -629,18 +636,8 @@ Tab:AddButton({
     end
 })
 
-Tab:AddButton({
-    Name = "最强战场6",
-    Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Mautiku/ehh/main/strong%20guest.lua.txt"))()
-    end
-})
-
-local Tabs = {
-    Main = Window:Section({ Title = "森林里的99夜", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- 森林里的99夜标签
+local Tab = Tabs.NightsInForest
 
 Tab:AddButton({
     Name = "刷钻石",
@@ -691,18 +688,8 @@ Tab:AddButton({
     end
 })
 
-Tab:AddButton({
-    Name = "99夜5",
-    Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/DARK.lua"))()
-    end
-})
-
-local Tabs = {
-    Main = Window:Section({ Title = "DOORS", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- DOORS标签
+local Tab = Tabs.Doors
 
 Tab:AddButton({
     Name = "DOORS1",
@@ -735,22 +722,12 @@ Tab:AddButton({
 Tab:AddButton({
     Name = "DOORS5",
     Callback = function()
-    loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
-    end
-})
-
-Tab:AddButton({
-    Name = "DOORS6",
-    Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoYunCN/EntitySpawner/main/doors(orionlib).lua"))()
     end
 })
 
-local Tabs = {
-    Main = Window:Section({ Title = "自然灾害", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- 自然灾害标签
+local Tab = Tabs.NaturalDisaster
 
 Tab:AddButton({
     Name = "物体单一悬浮",
@@ -800,18 +777,8 @@ Tab:AddButton({
     end
 })
 
-Tab:AddButton({
-    Name = "自然灾害4",
-    Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/9NLK7/93qjoadnlaknwldk/main/main'))()--Made By 1kWoof#0143
-    end
-})
-
-local Tabs = {
-    Main = Window:Section({ Title = "力量传奇", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- 力量传奇标签
+local Tab = Tabs.MuscleLegends
 
 Tab:AddButton({
     Name = "力量传奇1",
@@ -848,11 +815,8 @@ Tab:AddButton({
     end
 })
 
-local Tabs = {
-    Main = Window:Section({ Title = "忍者传奇", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- 忍者传奇标签
+local Tab = Tabs.NinjaLegends
 
 Tab:AddButton({
     Name = "忍者传奇1",
@@ -875,19 +839,8 @@ Tab:AddButton({
     end
 })
 
-local Tabs = {
-    Main = Window:Section({ Title = "死铁轨", Opened = true })
-}
-
-local Tab = Tabs.Main
-
-Tab:AddButton({
-    Name = "死铁轨1",
-    Callback = function()
-    --WTB
-    loadstring(game:HttpGet('https://pastefy.app/7vZN3EwV/raw'))()
-    end
-})
+-- 死铁轨标签
+local Tab = Tabs.DeadRails
 
 Tab:AddButton({
     Name = "死铁轨2",
@@ -924,11 +877,8 @@ Tab:AddButton({
     end
 })
 
-local Tabs = {
-    Main = Window:Section({ Title = "偷走脑红", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- 偷走脑红标签
+local Tab = Tabs.StealBrainrot
 
 Tab:AddButton({
     Name = "偷走脑红1",
@@ -972,21 +922,11 @@ Tab:AddButton({
     end
 })
 
-local Tabs = {
-    Main = Window:Section({ Title = "被遗弃", Opened = true })
-}
-
-local Tab = Tabs.Main
+-- 被遗弃标签
+local Tab = Tabs.Forsaken
 
 Tab:AddButton({
-    Name = "被遗弃1（卡密Samuelspizzatrip）",
-    Callback = function()
-    getgenv().XiaoPi="被遗弃-B0bby[汉化版]" loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/187ec501507e956200e0741a7bc38ca1cd83973f/%E8%A2%AB%E9%81%97%E5%BC%83B0bby%E6%B1%89%E5%8C%96%20(1).lua"))()
-    end
-})
-
-Tab:AddButton({
-    Name = "被遗弃2",
+    Name = "被遗弃1",
     Callback = function()
     --修复来自realguiwow
 --命中率取决于你的ping
@@ -998,28 +938,28 @@ loadstring(utf8.char(table.unpack({
 })
 
 Tab:AddButton({
-    Name = "被遗弃3",
+    Name = "被遗弃2",
     Callback = function()
     loadstring(request({Url="https://github.com/ZS-NB/KG/raw/main/SNT"}).Body)()
     end
 })
 
 Tab:AddButton({
-    Name = "被遗弃4",
+    Name = "被遗弃3",
     Callback = function()
     loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/ivannetta/ShitScripts/refs/heads/main/forsaken.lua")))()
     end
 })
 
 Tab:AddButton({
-    Name = "被遗弃5",
+    Name = "被遗弃4",
     Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/who-else123/my-scripts/refs/heads/main/Syncsaken/main.lua"))()
     end
 })
 
 Tab:AddButton({
-    Name = "被遗弃6",
+    Name = "被遗弃5",
     Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
     end
