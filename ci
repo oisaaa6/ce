@@ -1,5 +1,8 @@
 local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
 
+-- 等待UI库完全加载
+wait(1)
+
 WindUI:Notify({
     Title = "Blue paint",
     Content = "脚本中心",
@@ -14,7 +17,7 @@ local Window = WindUI:CreateWindow({
     IconTransparency = 0.5,
     Author = "Blue paint",
     Folder = "Blue paint",
-    Size = UDim2.fromOffset(100, 150),
+    Size = UDim2.fromOffset(500, 400),
     Transparent = true,
     Theme = "Dark",
     UserEnabled = true,
@@ -54,243 +57,319 @@ Window:EditOpenButton({
     Draggable = true,
 })
 
--- 修复：统一使用一个Tabs表，避免重复定义
-local Tabs = {
-    Main = Window:Section({ Title = "通用功能", Opened = true }),
-    OtherScripts = Window:Section({ Title = "其他脚本中心", Opened = true }),
-    FEScripts = Window:Section({ Title = "FE脚本", Opened = true }),
-    StrongestBattlegrounds = Window:Section({ Title = "最强战场", Opened = true }),
-    NightsInForest = Window:Section({ Title = "森林里的99夜", Opened = true }),
-    Doors = Window:Section({ Title = "DOORS", Opened = true }),
-    NaturalDisaster = Window:Section({ Title = "自然灾害", Opened = true }),
-    MuscleLegends = Window:Section({ Title = "力量传奇", Opened = true }),
-    NinjaLegends = Window:Section({ Title = "忍者传奇", Opened = true }),
-    DeadRails = Window:Section({ Title = "死铁轨", Opened = true }),
-    StealBrainrot = Window:Section({ Title = "偷走脑红", Opened = true }),
-    Forsaken = Window:Section({ Title = "被遗弃", Opened = true })
-}
+-- 创建所有标签
+local MainTab = Window:Tab({Title = "通用功能", Icon = "settings", Locked = false})
+local OtherScriptsTab = Window:Tab({Title = "其他脚本中心", Icon = "globe", Locked = false})
+local FEScriptsTab = Window:Tab({Title = "FE脚本", Icon = "zap", Locked = false})
+local StrongestBattlegroundsTab = Window:Tab({Title = "最强战场", Icon = "sword", Locked = false})
+local NightsInForestTab = Window:Tab({Title = "森林里的99夜", Icon = "tree", Locked = false})
+local DoorsTab = Window:Tab({Title = "DOORS", Icon = "door-open", Locked = false})
+local NaturalDisasterTab = Window:Tab({Title = "自然灾害", Icon = "cloud-rain", Locked = false})
+local MuscleLegendsTab = Window:Tab({Title = "力量传奇", Icon = "dumbbell", Locked = false})
+local NinjaLegendsTab = Window:Tab({Title = "忍者传奇", Icon = "user-ninja", Locked = false})
+local DeadRailsTab = Window:Tab({Title = "死铁轨", Icon = "train", Locked = false})
+local StealBrainrotTab = Window:Tab({Title = "偷走脑红", Icon = "brain", Locked = false})
+local ForsakenTab = Window:Tab({Title = "被遗弃", Icon = "ghost", Locked = false})
 
--- 通用功能标签
-local Tab = Tabs.Main
+-- 等待标签创建完成
+wait(0.5)
 
-Tab:AddSlider({
-    Name = "速度",
+-- 通用功能标签内容
+MainTab:Paragraph({
+    Title = "Blue paint 2.0",
+    Desc = "多功能脚本中心 - 通用功能模块",
+    Color = "Blue",
+    Image = "shield",
+    ImageSize = 30,
+    Buttons = {
+        {
+            Icon = "info",
+            Title = "关于",
+            Callback = function() 
+                WindUI:Notify({
+                    Title = "关于",
+                    Content = "Blue paint 2.0 脚本中心",
+                    Duration = 5
+                })
+            end,
+        }
+    }
+})
+
+MainTab:Section({Title = "角色属性设置", TextXAlignment = "Left", TextSize = 17})
+
+MainTab:Slider({
+    Title = "移动速度",
+    Desc = "调整角色移动速度 (16-200)",
     Min = 16,
     Max = 200,
     Default = 16,
-    Color = Color3.fromRGB(255,255,255),
-    Increment = 1,
-    ValueName = "数值",
+    ValueName = "速度",
     Callback = function(Value)
-        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = Value
         end
     end    
 })
 
-Tab:AddSlider({
-    Name = "跳跃高度",
+MainTab:Slider({
+    Title = "跳跃高度", 
+    Desc = "调整角色跳跃高度 (50-200)",
     Min = 50,
     Max = 200,
     Default = 50,
-    Color = Color3.fromRGB(255,255,255),
-    Increment = 1,
-    ValueName = "数值",
+    ValueName = "高度",
     Callback = function(Value)
-        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-            game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.JumpPower = Value
         end
     end    
 })
 
-Tab:AddTextbox({
-    Name = "跳跃高度设置",
+MainTab:Input({
+    Title = "设置跳跃高度",
+    Desc = "输入跳跃高度数值",
     Default = "",
-    TextDisappear = true,
+    ClearOnFocus = true,
     Callback = function(Value)
-        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-            game.Players.LocalPlayer.Character.Humanoid.JumpPower = tonumber(Value) or 50
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.JumpPower = tonumber(Value) or 50
         end
     end
 })
 
-Tab:AddTextbox({
-    Name = "移动速度设置",
+MainTab:Input({
+    Title = "设置移动速度", 
+    Desc = "输入移动速度数值",
     Default = "",
-    TextDisappear = true,
+    ClearOnFocus = true,
     Callback = function(Value)
-        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(Value) or 16
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = tonumber(Value) or 16
         end
     end
 })
 
-Tab:AddTextbox({
-    Name = "重力设置",
+MainTab:Input({
+    Title = "设置重力",
+    Desc = "输入重力数值 (默认196.2)",
     Default = "",
-    TextDisappear = true,
+    ClearOnFocus = true,
     Callback = function(Value)
         game.Workspace.Gravity = tonumber(Value) or 196.2
     end
 })
 
-Tab:AddToggle({
-    Name = "夜视",
+MainTab:Section({Title = "视觉功能", TextXAlignment = "Left", TextSize = 17})
+
+MainTab:Toggle({
+    Title = "夜视模式",
+    Desc = "开启夜间视野",
+    Icon = "moon",
     Default = false,
     Callback = function(Value)
         if Value then
             game.Lighting.Ambient = Color3.new(1, 1, 1)
+            game.Lighting.Brightness = 2
         else
             game.Lighting.Ambient = Color3.new(0, 0, 0)
+            game.Lighting.Brightness = 1
         end
     end
 })
 
-Tab:AddButton({
-    Name = "传送玩家",
+-- 修复穿墙功能
+local Noclip = false
+local Stepped
+
+MainTab:Toggle({
+    Title = "穿墙模式",
+    Desc = "允许穿过墙壁和物体",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            Noclip = true
+            Stepped = game.RunService.Stepped:Connect(function()
+                if Noclip and player.Character then
+                    for _, part in pairs(player.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = false
+                        end
+                    end
+                else
+                    Stepped:Disconnect()
+                end
+            end)
+        else
+            Noclip = false
+            if Stepped then
+                Stepped:Disconnect()
+            end
+        end
+    end
+})
+
+MainTab:Section({Title = "实用脚本", TextXAlignment = "Left", TextSize = 17})
+
+MainTab:Button({
+    Title = "飞行脚本",
+    Desc = "加载飞行功能",
+    Callback = function()
+        WindUI:Notify({Title = "飞行", Content = "正在加载飞行脚本...", Duration = 3})
+        loadstring(game:HttpGet'https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt')()
+    end    
+})
+
+MainTab:Button({
+    Title = "透视脚本", 
+    Desc = "加载透视功能",
+    Callback = function()
+        WindUI:Notify({Title = "透视", Content = "正在加载透视脚本...", Duration = 3})
+        loadstring(game:HttpGet("https://pastebin.com/raw/uw2P2fbY"))()
+    end    
+})
+
+MainTab:Button({
+    Title = "传送玩家",
+    Desc = "加载传送功能",
     Callback = function()
         loadstring(game:HttpGet(("https://pastebin.com/raw/YNVbeqPy")))()
     end
 })
 
-Tab:AddButton({
-    Name = "玩家进入提示",
+MainTab:Button({
+    Title = "玩家进入提示",
+    Desc = "显示玩家加入提示",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/boyscp/scriscriptsc/main/bbn.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "飞行",
+MainTab:Button({
+    Title = "飞车脚本",
+    Desc = "加载飞车功能",
     Callback = function()
-        loadstring(game:HttpGet'https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt')()
+        loadstring(game:HttpGet("https://pastebin.com/raw/63T0fkBm"))()
     end    
 })
 
-Tab:AddButton({
-    Name = "飞车",
-    Callback = function()
-     loadstring(game:HttpGet("https://pastebin.com/raw/63T0fkBm"))()
-    end    
-})
-
-Tab:AddButton({
-    Name = "最强透视",
-    Callback = function()
-        loadstring(game:HttpGet("https://pastebin.com/raw/uw2P2fbY"))()
-    end    
-})
-
-
-Tab:AddButton({
-    Name = "全员甩飞",
-    Callback = function()
-        loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()
-    end    
-})
-
-Tab:AddButton({
-    Name = "无限跳",
+MainTab:Button({
+    Title = "无限跳跃",
+    Desc = "开启无限跳跃功能",
     Callback = function()
         loadstring(game:HttpGet("https://pastebin.com/raw/V5PQy3y0", true))()
     end
 })
 
-Tab:AddButton({    
-    Name = "修改玩家碰撞箱",    
+MainTab:Button({    
+    Title = "修改碰撞箱",    
+    Desc = "修改玩家碰撞箱大小",
     Callback = function()
         loadstring(game:HttpGet('https://pastebin.com/raw/JYFXjEVh'))()
     end
 })
 
-Tab:AddButton({
-    Name = "替身",
+MainTab:Button({
+    Title = "替身脚本",
+    Desc = "加载替身功能",
     Callback = function()
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/SkrillexMe/SkrillexLoader/main/SkrillexLoadMain')))()
     end
 })
 
-Tab:AddButton({
-    Name = "反挂机v2",
+MainTab:Button({
+    Title = "反挂机v2",
+    Desc = "防止被检测为挂机",
     Callback = function()
         loadstring(game:HttpGet("https://pastebin.com/raw/9fFu43FF"))()
     end    
 })
 
-Tab:AddButton({
-    Name = "铁拳",
+MainTab:Button({
+    Title = "铁拳脚本",
+    Desc = "加载铁拳功能",
     Callback = function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/0Ben1/fe/main/obf_rf6iQURzu1fqrytcnLBAvW34C9N55kS9g9G3CKz086rC47M6632sEd4ZZYB0AYgV.lua.txt'))()
     end    
 })
 
-Tab:AddButton({
-    Name = "阿尔宙斯自瞄",
+MainTab:Button({
+    Title = "阿尔宙斯自瞄",
+    Desc = "加载自瞄功能",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/chillz-workshop/main/Arceus%20Aimbot.lua"))()    
     end    
 })
 
-Tab:AddButton({
-    Name = "爬墙",
+MainTab:Button({
+    Title = "爬墙脚本",
+    Desc = "加载爬墙功能",
     Callback = function()
         loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rq2r"))()
     end
 })
 
-Tab:AddButton({
-    Name = "FPS(变流畅)",
+MainTab:Button({
+    Title = "FPS优化",
+    Desc = "提升游戏流畅度",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/gclich/FPS-X-GUI/main/FPS_X.lua"))()
     end    
 })
 
-Tab:AddButton({
-    Name = "光影V4",
+MainTab:Button({
+    Title = "光影V4",
+    Desc = "加载光影效果",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/MZEEN2424/Graphics/main/Graphics.xml"))()
     end
 })
 
-Tab:AddButton({
-    Name = "变成蛇",
+MainTab:Button({
+    Title = "变成蛇",
+    Desc = "将角色变成蛇",
     Callback = function()
         loadstring(game:HttpGet(('https://pastefy.ga/tWBTcE4R/raw'),true))()
     end
 })
 
-Tab:AddButton({
-    Name = "让别让别人控制自己",
+MainTab:Button({
+    Title = "防控制",
+    Desc = "防止被别人控制",
     Callback = function()
         loadstring(game:HttpGet(('https://pastefy.ga/a7RTi4un/raw'),true))()
     end
 })
 
-Tab:AddButton({
-    Name = "子弹追踪",
+MainTab:Button({
+    Title = "子弹追踪",
+    Desc = "加载子弹追踪功能",
     Callback = function()
         loadstring(game:HttpGet("https://pastebin.com/raw/1AJ69eRG"))()
     end    
 })
 
-Tab:AddButton({
-    Name = "点击传送工具",
+MainTab:Button({
+    Title = "点击传送工具",
+    Desc = "获取点击传送工具",
     Callback = function()
-        mouse = game.Players.LocalPlayer:GetMouse() 
-        tool = Instance.new("Tool") 
+        local mouse = player:GetMouse() 
+        local tool = Instance.new("Tool") 
         tool.RequiresHandle = false 
         tool.Name = "[FE] TELEPORT TOOL" 
         tool.Activated:connect(function() 
             local pos = mouse.Hit+Vector3.new(0,2.5,0) 
             pos = CFrame.new(pos.X,pos.Y,pos.Z) 
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos 
+            player.Character.HumanoidRootPart.CFrame = pos 
         end) 
-        tool.Parent = game.Players.LocalPlayer.Backpack
+        tool.Parent = player.Backpack
+        WindUI:Notify({Title = "传送工具", Content = "传送工具已添加到背包", Duration = 3})
     end
 })
 
-Tab:AddButton({
-    Name = "无敌",
+MainTab:Button({
+    Title = "无敌模式",
+    Desc = "开启无敌状态",
     Callback = function()
         local lp = game:GetService "Players".LocalPlayer
         if lp.Character:FindFirstChild "Head" then
@@ -328,639 +407,796 @@ Tab:AddButton({
     end
 })
 
-Tab:AddButton({
-    Name = "死亡笔记",
+MainTab:Button({
+    Title = "死亡笔记",
+    Desc = "加载死亡笔记功能",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/1_1.txt_2024-08-08_153358.OTed.lua"))()
     end    
 })
 
-Tab:AddButton({
-    Name = "透视",
+MainTab:Button({
+    Title = "透视功能",
+    Desc = "另一种透视脚本",
     Callback = function()
         loadstring(game:HttpGet('https://pastebin.com/raw/MA8jhPWT'))()
     end    
 })
 
-Tab:AddButton({
-    Name = "吸人",
+MainTab:Button({
+    Title = "吸人功能",
+    Desc = "将其他玩家吸到身边",
     Callback = function()
         loadstring(game:HttpGet('https://pastebin.com/raw/hQSBGsw2'))()
     end    
 })
 
-Tab:AddButton({
-    Name = "人物无敌（不适用）",
-    Callback = function()
-        loadstring(game:HttpGet('https://pastebin.com/raw/H3RLCWWZ'))()
-    end    
-})
-
-Tab:AddButton({
-    Name = "踢人脚本",
+MainTab:Button({
+    Title = "踢人脚本",
+    Desc = "加载踢人功能",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/c8320f69b6aa4f5d.txt_2024-08-08_214628.OTed.lua"))()
     end    
 })
 
-Tab:AddButton({
-    Name = "隐身(E)",
+MainTab:Button({
+    Title = "隐身功能",
+    Desc = "按E键隐身",
     Callback = function()
         loadstring(game:HttpGet('https://pastebin.com/raw/nwGEvkez'))()
     end    
 })
 
-Tab:AddButton({
-    Name = "电脑键盘",
+MainTab:Button({
+    Title = "电脑键盘",
+    Desc = "加载虚拟键盘",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/advxzivhsjjdhxhsidifvsh/mobkeyboard/main/main.txt", true))()
     end    
 })
 
--- 修复：添加Noclip变量声明
-local Noclip = false
-local Stepped
-
-Tab:AddToggle({
-    Name = "穿墙",
-    Default = false,
-    Callback = function(Value)
-        if Value then
-            Noclip = true
-            Stepped = game.RunService.Stepped:Connect(function()
-                if Noclip == true then
-                    for a, b in pairs(game.Workspace:GetChildren()) do
-                        if b.Name == game.Players.LocalPlayer.Name then
-                            for i, v in pairs(game.Workspace[game.Players.LocalPlayer.Name]:GetChildren()) do
-                                if v:IsA("BasePart") then
-                                    v.CanCollide = false
-                                end
-                            end
-                        end
-                    end
-                else
-                    Stepped:Disconnect()
-                end
-            end)
-        else
-            Noclip = false
-            if Stepped then
-                Stepped:Disconnect()
-            end
-        end
-    end
-})
-
-Tab:AddButton({
-    Name = "鼠标（手机非常不建议用）",
+MainTab:Button({
+    Name = "鼠标控制",
+    Desc = "手机不建议使用",
     Callback = function()
         loadstring(game:HttpGet(('https://pastefy.ga/V75mqzaz/raw'),true))()
     end
 })
 
-Tab:AddButton({
-    Name = "跟踪玩家",
+MainTab:Button({
+    Title = "跟踪玩家",
+    Desc = "自动跟踪指定玩家",
     Callback = function()
         loadstring(game:HttpGet("https://pastebin.com/raw/F9PNLcXk"))()
     end
 })
 
-Tab:AddButton({
-    Name = "伪名说话",
+MainTab:Button({
+    Title = "伪名说话",
+    Desc = "使用假名发言",
     Callback = function()
         loadstring(game:HttpGet(('https://pastefy.ga/zCFEwaYq/raw'),true))()
     end 
 })
 
-Tab:AddButton({
-    Name = "踏空行走",
+MainTab:Button({
+    Title = "踏空行走",
+    Desc = "在空中行走",
     Callback = function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Float'))()
     end
 })
 
-Tab:AddButton({
-    Name = "透视",
+MainTab:Button({
+    Title = "高级透视",
+    Desc = "另一种透视功能",
     Callback = function()
         loadstring(game:GetObjects("rbxassetid://10092697033")[1].Source)()
     end 
 })
 
-Tab:AddButton({
-    Name = "转圈（使用此项关闭移位锁）",
+MainTab:Button({
+    Title = "转圈功能",
+    Desc = "使用此项关闭移位锁",
     Callback = function()
         loadstring(game:HttpGet('https://pastebin.com/raw/r97d7dS0', true))()
     end
 })
 
-Tab:AddButton({
-    Name = "通用ESP",    
+MainTab:Button({
+    Title = "通用ESP",    
+    Desc = "加载通用透视",    
     Callback = function()    
         loadstring(game:HttpGet('https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP'))()    
     end
 })
 
-Tab:AddButton({  
-    Name = "娱乐蓝屏(还需要手动开启)(大退关闭)", 
+MainTab:Button({  
+    Title = "娱乐蓝屏", 
+    Desc = "大退游戏关闭", 
     Callback = function()   
         loadstring(game:HttpGet("https://github.com/RunDTM/roblox-bluescreen/raw/main/bsod.lua"))() 
     end
 })
 
-Tab:AddButton({
-    Name="紫砂",
+MainTab:Button({
+    Title="紫砂功能",
+    Desc="立即死亡",
     Callback=function()
-        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-            game.Players.LocalPlayer.Character.Humanoid.Health = 0
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.Health = 0
         end
     end
 })
 
--- 其他脚本中心标签
-local Tab = Tabs.OtherScripts
+-- 其他脚本中心标签内容
+OtherScriptsTab:Paragraph({
+    Title = "其他脚本中心",
+    Desc = "集成了多个热门脚本中心",
+    Color = "Green",
+    Image = "package",
+    ImageSize = 30
+})
 
-Tab:AddButton({
-    Name = "CyOvO脚本中心",
+OtherScriptsTab:Button({
+    Title = "CyOvO脚本中心",
+    Desc = "加载CyOvO脚本中心",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/lxmyysd/ranchun666/refs/heads/main/cyovo%E8%84%9A%E6%9C%AC%E4%B8%AD%E5%BF%83.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/lxmyysd/ranchun666/refs/heads/main/cyovo%E8%84%9A%E6%9C%AC%E4%B8%AD%E5%BF%83.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "叶脚本",
+OtherScriptsTab:Button({
+    Title = "叶脚本",
+    Desc = "加载叶脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/roblox-ye/QQ515966991/refs/heads/main/ROBLOX-CNVIP-XIAOYE.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/roblox-ye/QQ515966991/refs/heads/main/ROBLOX-CNVIP-XIAOYE.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "皮脚本",
+OtherScriptsTab:Button({
+    Title = "皮脚本",
+    Desc = "加载皮脚本",
     Callback = function()
-    getgenv().XiaoPi="皮脚本QQ群1002100032" loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()
+        getgenv().XiaoPi="皮脚本QQ群1002100032" 
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "苏脚本",
+OtherScriptsTab:Button({
+    Title = "苏脚本",
+    Desc = "加载苏脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://github.com/kukunb/lol/raw/main/load"))()
+        loadstring(game:HttpGet("https://github.com/kukunb/lol/raw/main/load"))()
     end
 })
 
-Tab:AddButton({
-    Name = "SN中心",
+OtherScriptsTab:Button({
+    Title = "SN中心",
+    Desc = "加载SN脚本中心",
     Callback = function()
-    loadstring("\108\111\97\100\115\116\114\105\110\103\40\103\97\109\101\58\72\116\116\112\71\101\116\40\34\104\116\116\112\115\58\47\47\114\97\119\46\103\105\116\104\117\98\117\115\101\114\99\111\110\116\101\110\116\46\99\111\109\47\120\105\97\110\105\110\103\49\53\49\47\83\78\72\85\66\47\109\97\105\110\47\83\78\104\117\98\46\108\117\97\34\41\41\40\41")()
+        loadstring("\108\111\97\100\115\116\114\105\110\103\40\103\97\109\101\58\72\116\116\112\71\101\116\40\34\104\116\116\112\115\58\47\47\114\97\119\46\103\105\116\104\117\98\117\115\101\114\99\111\110\116\101\110\116\46\99\111\109\47\120\105\97\110\105\110\103\49\53\49\47\83\78\72\85\66\47\109\97\105\110\47\83\78\104\117\98\46\108\117\97\34\41\41\40\41")()
     end
 })
 
-Tab:AddButton({
-    Name = "殺脚本",
+OtherScriptsTab:Button({
+    Title = "殺脚本",
+    Desc = "加载殺脚本",
     Callback = function()
-    --脚本要全部复制
---如果看到了不听劝后果自负
-FengYu_HUB = "殺脚本"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/FengYu-3/FengYu/refs/heads/⭐作者风御/🇨🇨🇳🇳殺脚本🇨🇨🇳🇳"))()
+        FengYu_HUB = "殺脚本"
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/FengYu-3/FengYu/refs/heads/⭐作者风御/🇨🇨🇳🇳殺脚本🇨🇨🇳🇳"))()
     end
 })
 
--- FE脚本标签
-local Tab = Tabs.FEScripts
+-- FE脚本标签内容
+FEScriptsTab:Paragraph({
+    Title = "FE脚本",
+    Desc = "Front End脚本 - 客户端效果",
+    Color = "Purple",
+    Image = "zap",
+    ImageSize = 30
+})
 
-Tab:AddButton({
-    Name = "coolgui",
+FEScriptsTab:Button({
+    Title = "coolgui",
+    Desc = "加载coolgui",
     Callback = function()
-    loadstring(game:GetObjects("rbxassetid://8127297852")[1].Source)()
+        loadstring(game:GetObjects("rbxassetid://8127297852")[1].Source)()
     end
 })
 
--- 修复：删除重复的coolgui按钮，修复动画中心的Callback拼写错误
-Tab:AddButton({
-    Name = "动画中心",
-    Callback = function()  -- 修复：Calback -> Callback
-     loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Animation-Hub/main/Animation%20Gui", true))()
-     end
-})
-
-Tab:AddButton({
-    Name = "变玩家（r6体型）",
+FEScriptsTab:Button({
+    Title = "动画中心",
+    Desc = "加载动画中心",
     Callback = function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/XR4sGcgJ"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Animation-Hub/main/Animation%20Gui", true))()
     end
 })
 
-Tab:AddButton({
-    Name = "1x1x1x1",
+FEScriptsTab:Button({
+    Title = "变玩家（r6体型）",
+    Desc = "变成其他玩家外观",
     Callback = function()
-    loadstring(game:HttpGet(('https://pastebin.com/raw/JipYNCht'),true))()
+        loadstring(game:HttpGet("https://pastebin.com/raw/XR4sGcgJ"))()
     end
 })
 
-Tab:AddButton({
-    Name = "无敌少侠飞行（r15体型）",
+FEScriptsTab:Button({
+    Title = "1x1x1x1",
+    Desc = "加载1x1x1x1脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
+        loadstring(game:HttpGet(('https://pastebin.com/raw/JipYNCht'),true))()
     end
 })
 
-Tab:AddButton({
-    Name = "无敌少侠飞行（r6）",
+FEScriptsTab:Button({
+    Title = "无敌少侠飞行（r15体型）",
+    Desc = "R15体型飞行",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/%E6%97%A0%E6%95%8C%E5%B0%91%E4%BE%A0%E9%A3%9E%E8%A1%8Cr6.txt"))()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
     end
 })
 
-Tab:AddButton({
-    Name = "防坠落",
+FEScriptsTab:Button({
+    Title = "无敌少侠飞行（r6）",
+    Desc = "R6体型飞行",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/MSTTOPPER/Scripts/refs/heads/main/FlashBack"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/%E6%97%A0%E6%95%8C%E5%B0%91%E4%BE%A0%E9%A3%9E%E8%A1%8Cr6.txt"))()
     end
 })
 
--- 最强战场标签
-local Tab = Tabs.StrongestBattlegrounds
-
-Tab:AddButton({
-    Name = "饿狼火车头动作包",
+FEScriptsTab:Button({
+    Title = "防坠落",
+    Desc = "防止从高处坠落",
     Callback = function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-The-Strongest-Battleground-a-train-Moveset-script-47030"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/MSTTOPPER/Scripts/refs/heads/main/FlashBack"))()
     end
 })
 
-Tab:AddButton({
-    Name = "琦玉五条悟动作包",
+-- 最强战场标签内容
+StrongestBattlegroundsTab:Paragraph({
+    Title = "最强战场",
+    Desc = "最强战场游戏脚本",
+    Color = "Red",
+    Image = "sword",
+    ImageSize = 30
+})
+
+StrongestBattlegroundsTab:Button({
+    Title = "饿狼火车头动作包",
+    Desc = "加载动作包",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Kamyk-player/FinalSuperSenior/refs/heads/main/SaitamaToSuperSeniorGojo"))()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-The-Strongest-Battleground-a-train-Moveset-script-47030"))()
     end
 })
 
-Tab:AddButton({
-    Name = "连续丟垃圾桶",
+StrongestBattlegroundsTab:Button({
+    Title = "琦玉五条悟动作包", 
+    Desc = "加载动作包",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/gycgchgyfytdttr/shenqin/refs/heads/main/V1.0.0.txt"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kamyk-player/FinalSuperSenior/refs/heads/main/SaitamaToSuperSeniorGojo"))()
     end
 })
 
-Tab:AddButton({
-    Name = "最强战场1",
+StrongestBattlegroundsTab:Button({
+    Title = "连续丟垃圾桶",
+    Desc = "连续丟垃圾桶功能",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditoiletfan2007/tsbscripts/main/Main"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/gycgchgyfytdttr/shenqin/refs/heads/main/V1.0.0.txt"))()
     end
 })
 
-Tab:AddButton({
-    Name = "最强战场2",
+StrongestBattlegroundsTab:Button({
+    Title = "最强战场1",
+    Desc = "加载最强战场脚本1",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Tax-Script/TaxHub/refs/heads/main/VexonHub"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditoiletfan2007/tsbscripts/main/Main"))()
     end
 })
 
-Tab:AddButton({
-    Name = "最强战场3",
+StrongestBattlegroundsTab:Button({
+    Title = "最强战场2",
+    Desc = "加载最强战场脚本2",
     Callback = function()
-    loadstring(game:HttpGet("https://pastefy.app/REPoaFWC/raw",true))();
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Tax-Script/TaxHub/refs/heads/main/VexonHub"))()
     end
 })
 
-Tab:AddButton({
-    Name = "最强战场4",
+StrongestBattlegroundsTab:Button({
+    Title = "最强战场3",
+    Desc = "加载最强战场脚本3",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/louismich4el/Zygarde/refs/heads/main/ZygardeV1.txt"))()
+        loadstring(game:HttpGet("https://pastefy.app/REPoaFWC/raw",true))();
     end
 })
 
-Tab:AddButton({
-    Name = "最强战场5",
+StrongestBattlegroundsTab:Button({
+    Title = "最强战场4",
+    Desc = "加载最强战场脚本4",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/TSB/refs/heads/main/CombatGui"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/louismich4el/Zygarde/refs/heads/main/ZygardeV1.txt"))()
     end
 })
 
--- 森林里的99夜标签
-local Tab = Tabs.NightsInForest
-
-Tab:AddButton({
-    Name = "刷钻石",
+StrongestBattlegroundsTab:Button({
+    Title = "最强战场5",
+    Desc = "加载最强战场脚本5",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/TheqopThe/robax/refs/heads/main/jumpscare.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/TSB/refs/heads/main/CombatGui"))()
     end
 })
 
-Tab:AddButton({
-    Name = "刷钻石2",
+StrongestBattlegroundsTab:Button({
+    Title = "最强战场6",
+    Desc = "加载最强战场脚本6",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hellatexyss/autofarmdiamonds/main/overhubaurofarm.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Mautiku/ehh/main/strong%20guest.lua.txt"))()
     end
 })
 
-Tab:AddButton({
-    Name = "刷钻石3",
+-- 森林里的99夜标签内容
+NightsInForestTab:Paragraph({
+    Title = "森林里的99夜",
+    Desc = "99夜游戏脚本",
+    Color = "Green",
+    Image = "tree",
+    ImageSize = 30
+})
+
+NightsInForestTab:Button({
+    Title = "刷钻石脚本",
+    Desc = "自动刷取钻石",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Rezexis/Main-Lua/refs/heads/main/Loader.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/TheqopThe/robax/refs/heads/main/jumpscare.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "99夜1",
+NightsInForestTab:Button({
+    Title = "刷钻石脚本2",
+    Desc = "第二个刷钻石脚本", 
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/99%E5%A4%9C%E8%99%9A%E7%A9%BA.txt"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/hellatexyss/autofarmdiamonds/main/overhubaurofarm.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "99夜2",
+NightsInForestTab:Button({
+    Title = "刷钻石脚本3",
+    Desc = "第三个刷钻石脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/voidware-cn.txt"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Rezexis/Main-Lua/refs/heads/main/Loader.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "99夜3",
+NightsInForestTab:Button({
+    Title = "99夜脚本1",
+    Desc = "加载99夜脚本1",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/99Nights"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/99%E5%A4%9C%E8%99%9A%E7%A9%BA.txt"))()
     end
 })
 
-Tab:AddButton({
-    Name = "99夜4",
+NightsInForestTab:Button({
+    Title = "99夜脚本2",
+    Desc = "加载99夜脚本2",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/voidware-cn.txt"))()
     end
 })
 
--- DOORS标签
-local Tab = Tabs.Doors
-
-Tab:AddButton({
-    Name = "DOORS1",
+NightsInForestTab:Button({
+    Title = "99夜脚本3",
+    Desc = "加载99夜脚本3",
     Callback = function()
-   loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/002c19202c9946e6047b0c6e0ad51f84.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/99Nights"))()
     end
 })
 
-Tab:AddButton({
-    Name = "DOORS2",
+NightsInForestTab:Button({
+    Title = "99夜脚本4",
+    Desc = "加载99夜脚本4",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/Abysallcn-hub"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true))()
     end
 })
 
-Tab:AddButton({
-    Name = "DOORS3",
+NightsInForestTab:Button({
+    Title = "99夜脚本5",
+    Desc = "加载99夜脚本5",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Darkrai-X/main/Games/Doors"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/DARK.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "DOORS4",
+-- DOORS标签内容
+DoorsTab:Paragraph({
+    Title = "DOORS",
+    Desc = "DOORS游戏脚本",
+    Color = "Orange",
+    Image = "door-open",
+    ImageSize = 30
+})
+
+DoorsTab:Button({
+    Title = "DOORS脚本1",
+    Desc = "加载DOORS脚本",
     Callback = function()
-     --[[Doors Blackking And BobHub脚本汉化]]loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
+        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/002c19202c9946e6047b0c6e0ad51f84.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "DOORS5",
+DoorsTab:Button({
+    Title = "DOORS脚本2",
+    Desc = "加载第二个DOORS脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoYunCN/EntitySpawner/main/doors(orionlib).lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/Abysallcn-hub"))()
     end
 })
 
--- 自然灾害标签
-local Tab = Tabs.NaturalDisaster
-
-Tab:AddButton({
-    Name = "物体单一悬浮",
+DoorsTab:Button({
+    Title = "DOORS脚本3",
+    Desc = "加载第三个DOORS脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/单一物体飞行载自己最终优化版"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Darkrai-X/main/Games/Doors"))()
     end
 })
 
-Tab:AddButton({
-    Name = "物体全局悬浮",
+DoorsTab:Button({
+    Title = "DOORS脚本4",
+    Desc = "加载第四个DOORS脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/全局物体漂浮最终优化版"))()
+        loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
     end
 })
 
-Tab:AddButton({
-    Name = "球型黑洞",
+DoorsTab:Button({
+    Title = "DOORS脚本5",
+    Desc = "加载第五个DOORS脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/Soul-Ring/main/%E5%8F%AC%E5%94%A4%E9%AD%82%E7%8E%AF"))()
-    end
-})
-Tab:AddButton({
-    Name = "零件破坏",
-    Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/-/main/零件破坏者v2"))()
+        loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
     end
 })
 
-Tab:AddButton({
-    Name = "自然灾害1",
+DoorsTab:Button({
+    Title = "DOORS脚本6",
+    Desc = "加载第六个DOORS脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/2dgeneralspam1/scripts-and-stuff/master/scripts/LoadstringUjHI6RQpz2o8", true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoYunCN/EntitySpawner/main/doors(orionlib).lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "自然灾害2",
+-- 自然灾害标签内容
+NaturalDisasterTab:Paragraph({
+    Title = "自然灾害",
+    Desc = "自然灾害游戏脚本",
+    Color = "Yellow",
+    Image = "cloud-rain",
+    ImageSize = 30
+})
+
+NaturalDisasterTab:Button({
+    Title = "物体单一悬浮",
+    Desc = "单个物体悬浮",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/xiao122231/xiao122231/main/%E8%87%AA%E7%84%B6%E7%81%BE%E5%AE%B3"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/单一物体飞行载自己最终优化版"))()
     end
 })
 
-Tab:AddButton({
-    Name = "自然灾害3",
+NaturalDisasterTab:Button({
+    Title = "物体全局悬浮",
+    Desc = "全局物体悬浮",
     Callback = function()
-    loadstring(game:HttpGet(('https://raw.githubusercontent.com/MrWitzbold/Natural-disaster-survival-GUI/main/main.lua'),true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/全局物体漂浮最终优化版"))()
     end
 })
 
--- 力量传奇标签
-local Tab = Tabs.MuscleLegends
-
-Tab:AddButton({
-    Name = "力量传奇1",
+NaturalDisasterTab:Button({
+    Title = "球型黑洞",
+    Desc = "创建球型黑洞",
     Callback = function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Blox-Fruits-Speed-Hub-X-24115"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/Soul-Ring/main/%E5%8F%AC%E5%94%A4%E9%AD%82%E7%8E%AF"))()
     end
 })
 
-Tab:AddButton({
-    Name = "力量传奇2",
+NaturalDisasterTab:Button({
+    Title = "零件破坏",
+    Desc = "破坏游戏零件",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/littlegui/main/MuscleLegends"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/-/main/零件破坏者v2"))()
     end
 })
 
-Tab:AddButton({
-    Name = "力量传奇3",
+NaturalDisasterTab:Button({
+    Title = "自然灾害1",
+    Desc = "加载自然灾害脚本1",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Enchanted%20Hub%20On%20Top"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/2dgeneralspam1/scripts-and-stuff/master/scripts/LoadstringUjHI6RQpz2o8", true))()
     end
 })
 
-Tab:AddButton({
-    Name = "力量传奇4",
+NaturalDisasterTab:Button({
+    Title = "自然灾害2",
+    Desc = "加载自然灾害脚本2",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/jiankeQWQ/JianKeStudio/main/liliangchuanqi"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/xiao122231/xiao122231/main/%E8%87%AA%E7%84%B6%E7%81%BE%E5%AE%B3"))()
     end
 })
 
-Tab:AddButton({
-    Name = "力量传奇5",
+NaturalDisasterTab:Button({
+    Title = "自然灾害3",
+    Desc = "加载自然灾害脚本3",
     Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/jynzl/main/main/Musclas%20Legenos.lua'))()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/MrWitzbold/Natural-disaster-survival-GUI/main/main.lua'),true))()
     end
 })
 
--- 忍者传奇标签
-local Tab = Tabs.NinjaLegends
-
-Tab:AddButton({
-    Name = "忍者传奇1",
+NaturalDisasterTab:Button({
+    Title = "自然灾害4",
+    Desc = "加载自然灾害脚本4",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/why-png/scriptstuffz/master/ninjaleg2", true))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/9NLK7/93qjoadnlaknwldk/main/main'))()
     end
 })
 
-Tab:AddButton({
-    Name = "忍者传奇2",
+-- 力量传奇标签内容
+MuscleLegendsTab:Paragraph({
+    Title = "力量传奇",
+    Desc = "力量传奇游戏脚本",
+    Color = "Blue",
+    Image = "dumbbell",
+    ImageSize = 30
+})
+
+MuscleLegendsTab:Button({
+    Title = "力量传奇1",
+    Desc = "加载力量传奇脚本1",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.github.com/VcPa/V/main/v"))()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/Blox-Fruits-Speed-Hub-X-24115"))()
     end
 })
 
-Tab:AddButton({
-    Name = "忍者传奇3",
+MuscleLegendsTab:Button({
+    Title = "力量传奇2",
+    Desc = "加载力量传奇脚本2",
     Callback = function()
-    loadstring(game:HttpGet("https://github.com/CloudX-ScriptsWane/ScriptsDache/raw/main/hope%20earnestly%2FNinja%20Legend.lua", true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/littlegui/main/MuscleLegends"))()
     end
 })
 
--- 死铁轨标签
-local Tab = Tabs.DeadRails
-
-Tab:AddButton({
-    Name = "死铁轨2",
+MuscleLegendsTab:Button({
+    Title = "力量传奇3",
+    Desc = "加载力量传奇脚本3",
     Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Dead%20Rails%20GUI'))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Enchanted%20Hub%20On%20Top"))()
     end
 })
 
-Tab:AddButton({
-    Name = "死铁轨3",
+MuscleLegendsTab:Button({
+    Title = "力量传奇4",
+    Desc = "加载力量传奇脚本4",
     Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Catto-YFCN/Lunor_Dependencies/refs/heads/main/Loader'))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/jiankeQWQ/JianKeStudio/main/liliangchuanqi"))()
     end
 })
 
-Tab:AddButton({
-    Name = "死铁轨4",
+MuscleLegendsTab:Button({
+    Title = "力量传奇5",
+    Desc = "加载力量传奇脚本5",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails", true))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/jynzl/main/main/Musclas%20Legenos.lua'))()
     end
 })
 
-Tab:AddButton({
-    Name = "死铁轨6",
+-- 忍者传奇标签内容
+NinjaLegendsTab:Paragraph({
+    Title = "忍者传奇",
+    Desc = "忍者传奇游戏脚本",
+    Color = "Red",
+    Image = "user-ninja",
+    ImageSize = 30
+})
+
+NinjaLegendsTab:Button({
+    Title = "忍者传奇1",
+    Desc = "加载忍者传奇脚本1",
     Callback = function()
-    loadstring(game:HttpGet('https://lunor.dev/loader'))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/why-png/scriptstuffz/master/ninjaleg2", true))()
     end
 })
 
-Tab:AddButton({
-    Name = "死铁轨7",
+NinjaLegendsTab:Button({
+    Title = "忍者传奇2",
+    Desc = "加载忍者传奇脚本2",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))()
+        loadstring(game:HttpGet("https://raw.github.com/VcPa/V/main/v"))()
     end
 })
 
--- 偷走脑红标签
-local Tab = Tabs.StealBrainrot
-
-Tab:AddButton({
-    Name = "偷走脑红1",
+NinjaLegendsTab:Button({
+    Title = "忍者传奇3",
+    Desc = "加载忍者传奇脚本3",
     Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Steal%20A%20Brainrot%20GUI'))()
+        loadstring(game:HttpGet("https://github.com/CloudX-ScriptsWane/ScriptsDache/raw/main/hope%20earnestly%2FNinja%20Legend.lua", true))()
     end
 })
 
-Tab:AddButton({
-    Name = "偷走脑红2",
+-- 死铁轨标签内容
+DeadRailsTab:Paragraph({
+    Title = "死铁轨",
+    Desc = "死铁轨游戏脚本",
+    Color = "Gray",
+    Image = "train",
+    ImageSize = 30
+})
+
+DeadRailsTab:Button({
+    Title = "死铁轨1",
+    Desc = "加载死铁轨脚本1",
     Callback = function()
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/fc6607930f2b0b3d792cb7486ddc8137.lua"))()
+        loadstring(game:HttpGet('https://pastefy.app/7vZN3EwV/raw'))()
     end
 })
 
-Tab:AddButton({
-    Name = "偷走脑红3",
+DeadRailsTab:Button({
+    Title = "死铁轨2",
+    Desc = "加载死铁轨脚本2",
     Callback = function()
-    loadstring(game:HttpGet("https://hackmanhub.pages.dev/loader.txt"))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Dead%20Rails%20GUI'))()
     end
 })
 
-Tab:AddButton({
-    Name = "偷走脑红4",
+DeadRailsTab:Button({
+    Title = "死铁轨3",
+    Desc = "加载死铁轨脚本3",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/DynaFetchy/Scripts/refs/heads/main/Loader.lua"))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/Catto-YFCN/Lunor_Dependencies/refs/heads/main/Loader'))()
     end
 })
 
-Tab:AddButton({
-    Name = "偷走脑红5（卡密Arbix hub）",
+DeadRailsTab:Button({
+    Title = "死铁轨4",
+    Desc = "加载死铁轨脚本4",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Youifpg/Steal-a-Brianrot/refs/heads/main/ArbixHubBEST.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails", true))()
     end
 })
 
-Tab:AddButton({
-    Name = "偷走脑红6",
+DeadRailsTab:Button({
+    Title = "死铁轨6",
+    Desc = "加载死铁轨脚本6",
     Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/godor1010/godor/refs/heads/main/0_steal_a_brainrot'))()
+        loadstring(game:HttpGet('https://lunor.dev/loader'))()
     end
 })
 
--- 被遗弃标签
-local Tab = Tabs.Forsaken
-
-Tab:AddButton({
-    Name = "被遗弃1",
+DeadRailsTab:Button({
+    Title = "死铁轨7",
+    Desc = "加载死铁轨脚本7",
     Callback = function()
-    --修复来自realguiwow
---命中率取决于你的ping
---使用杰森效果更佳
-loadstring(utf8.char(table.unpack({
-108,111,97,100,115,116,114,105,110,103,40,103,97,109,101,58,72,116,116,112,71,101,116,40,34,104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,114,101,97,108,103,117,105,119,111,119,47,102,111,114,115,97,107,101,110,47,114,101,102,115,47,104,101,97,100,115,47,109,97,105,110,47,104,105,116,98,111,120,108,111,99,97,116,101,34,41,41,40,41
-})))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "被遗弃2",
+-- 偷走脑红标签内容
+StealBrainrotTab:Paragraph({
+    Title = "偷走脑红",
+    Desc = "偷走脑红游戏脚本",
+    Color = "Pink",
+    Image = "brain",
+    ImageSize = 30
+})
+
+StealBrainrotTab:Button({
+    Title = "偷走脑红1",
+    Desc = "加载偷走脑红脚本1",
     Callback = function()
-    loadstring(request({Url="https://github.com/ZS-NB/KG/raw/main/SNT"}).Body)()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Steal%20A%20Brainrot%20GUI'))()
     end
 })
 
-Tab:AddButton({
-    Name = "被遗弃3",
+StealBrainrotTab:Button({
+    Title = "偷走脑红2",
+    Desc = "加载偷走脑红脚本2",
     Callback = function()
-    loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/ivannetta/ShitScripts/refs/heads/main/forsaken.lua")))()
+        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/fc6607930f2b0b3d792cb7486ddc8137.lua"))()
     end
 })
 
-Tab:AddButton({
-    Name = "被遗弃4",
+StealBrainrotTab:Button({
+    Title = "偷走脑红3",
+    Desc = "加载偷走脑红脚本3",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/who-else123/my-scripts/refs/heads/main/Syncsaken/main.lua"))()
+        loadstring(game:HttpGet("https://hackmanhub.pages.dev/loader.txt"))()
     end
 })
 
-Tab:AddButton({
-    Name = "被遗弃5",
+StealBrainrotTab:Button({
+    Title = "偷走脑红4",
+    Desc = "加载偷走脑红脚本4",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DynaFetchy/Scripts/refs/heads/main/Loader.lua"))()
     end
+})
+
+StealBrainrotTab:Button({
+    Title = "偷走脑红5",
+    Desc = "加载偷走脑红脚本5（需要卡密）",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Youifpg/Steal-a-Brianrot/refs/heads/main/ArbixHubBEST.lua"))()
+    end
+})
+
+StealBrainrotTab:Button({
+    Title = "偷走脑红6",
+    Desc = "加载偷走脑红脚本6",
+    Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/godor1010/godor/refs/heads/main/0_steal_a_brainrot'))()
+    end
+})
+
+-- 被遗弃标签内容
+ForsakenTab:Paragraph({
+    Title = "被遗弃",
+    Desc = "被遗弃游戏脚本",
+    Color = "DarkGray",
+    Image = "ghost",
+    ImageSize = 30
+})
+
+ForsakenTab:Button({
+    Title = "被遗弃1",
+    Desc = "加载被遗弃脚本1（需要卡密）",
+    Callback = function()
+        getgenv().XiaoPi="被遗弃-B0bby[汉化版]" 
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/187ec501507e956200e0741a7bc38ca1cd83973f/%E8%A2%AB%E9%81%97%E5%BC%83B0bby%E6%B1%89%E5%8C%96%20(1).lua"))()
+    end
+})
+
+ForsakenTab:Button({
+    Title = "被遗弃2",
+    Desc = "加载被遗弃脚本2",
+    Callback = function()
+        loadstring(utf8.char(table.unpack({
+        108,111,97,100,115,116,114,105,110,103,40,103,97,109,101,58,72,116,116,112,71,101,116,40,34,104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,114,101,97,108,103,117,105,119,111,119,47,102,111,114,115,97,107,101,110,47,114,101,102,115,47,104,101,97,100,115,47,109,97,105,110,47,104,105,116,98,111,120,108,111,99,97,116,101,34,41,41,40,41
+        })))()
+    end
+})
+
+ForsakenTab:Button({
+    Title = "被遗弃3",
+    Desc = "加载被遗弃脚本3",
+    Callback = function()
+        loadstring(request({Url="https://github.com/ZS-NB/KG/raw/main/SNT"}).Body)()
+    end
+})
+
+ForsakenTab:Button({
+    Title = "被遗弃4",
+    Desc = "加载被遗弃脚本4",
+    Callback = function()
+        loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/ivannetta/ShitScripts/refs/heads/main/forsaken.lua")))()
+    end
+})
+
+ForsakenTab:Button({
+    Title = "被遗弃5",
+    Desc = "加载被遗弃脚本5",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/who-else123/my-scripts/refs/heads/main/Syncsaken/main.lua"))()
+    end
+})
+
+ForsakenTab:Button({
+    Title = "被遗弃6",
+    Desc = "加载被遗弃脚本6",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
+    end
+})
+
+-- 完成提示
+WindUI:Notify({
+    Title = "Blue paint 2.0",
+    Content = "脚本中心加载完成！享受游戏吧！",
+    Duration = 5,
+    Icon = "check"
 })
