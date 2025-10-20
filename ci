@@ -1410,3 +1410,4 @@ ForsakenTab:Button({
 })
 
 return Window
+end
