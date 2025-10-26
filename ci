@@ -1,10 +1,16 @@
-local RainbowLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/YJY2022hh666/yjy/main/rainbow.ui.main.lua?token=GHSAT0AAAAAACESL5MYP6BL6PJ45CVEZRQEZFYXXUA",true))()
-local window = library:new("Blue paint 2.0")
-
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/BS58dL/BS/refs/heads/main/骇灵.UI"))()
+local Window = Library:new("BP脚本中心V1")
+	do
+		local settingssTab = Window:Tab("配置UI",92237541628279'')
+		local configSection = settingssTab:section("配置管理", true)
+		configSection:ConfigManager()
+		local styleSection = settingssTab:section("UI样式设置", true)
+		styleSection:UIStyleSettings()
+	end
 local player = game.Players.LocalPlayer
 
 -- 通用功能标签页
-local MainTab = window:Tab("通用功能",'6035145364')
+local MainTab = window:Tab("通用功能",'92237541628279')
 
 local mainSection1 = MainTab:section("角色属性设置",true)
 
@@ -260,7 +266,7 @@ mainSection3:Button("紫砂功能",function()
 end)
 
 -- 其他脚本中心标签页
-local OtherScriptsTab = window:Tab("其他脚本中心",'6035145364')
+local OtherScriptsTab = window:Tab("其他脚本中心",'92237541628279')
 
 local otherSection = OtherScriptsTab:section("脚本中心",true)
 
@@ -291,7 +297,7 @@ otherSection:Button("殺脚本",function()
 end)
 
 -- FE脚本标签页
-local FEScriptsTab = window:Tab("FE脚本",'6035145364')
+local FEScriptsTab = window:Tab("FE脚本",'92237541628279')
 
 local feSection = FEScriptsTab:section("FE脚本",true)
 
@@ -324,7 +330,7 @@ feSection:Button("防坠落",function()
 end)
 
 -- 最强战场标签页
-local StrongestBattlegroundsTab = window:Tab("最强战场",'6035145364')
+local StrongestBattlegroundsTab = window:Tab("最强战场",'92237541628279')
 
 local sbSection = StrongestBattlegroundsTab:section("最强战场脚本",true)
 
@@ -365,7 +371,7 @@ sbSection:Button("最强战场6",function()
 end)
 
 -- 森林中的99夜标签页
-local NightsTab = window:Tab("森林中的99夜",'6035145364')
+local NightsTab = window:Tab("森林中的99夜",'92237541628279')
 
 local nightsSection = NightsTab:section("99夜脚本",true)
 
@@ -402,7 +408,7 @@ nightsSection:Button("刷钻石3",function()
 end)
 
 -- DOORS标签页
-local DoorsTab = window:Tab("DOORS",'6035145364')
+local DoorsTab = window:Tab("DOORS",'92237541628279')
 
 local doorsSection = DoorsTab:section("DOORS脚本",true)
 
@@ -427,7 +433,7 @@ doorsSection:Button("DOORS脚本6",function()
 end)
 
 -- 自然灾害标签页
-local NaturalDisasterTab = window:Tab("自然灾害",'6035145364')
+local NaturalDisasterTab = window:Tab("自然灾害",'92237541628279')
 
 local ndSection = NaturalDisasterTab:section("自然灾害脚本",true)
 
@@ -464,7 +470,7 @@ ndSection:Button("自然灾害4",function()
 end)
 
 -- 力量传奇标签页
-local MuscleLegendsTab = window:Tab("力量传奇",'6035145364')
+local MuscleLegendsTab = window:Tab("力量传奇",'92237541628279')
 
 local mlSection = MuscleLegendsTab:section("力量传奇脚本",true)
 
@@ -489,7 +495,7 @@ mlSection:Button("力量传奇5",function()
 end)
 
 -- 忍者传奇标签页
-local NinjaLegendsTab = window:Tab("忍者传奇",'6035145364')
+local NinjaLegendsTab = window:Tab("忍者传奇",'92237541628279')
 
 local nlSection = NinjaLegendsTab:section("忍者传奇脚本",true)
 
@@ -506,7 +512,7 @@ nlSection:Button("忍者传奇3",function()
 end)
 
 -- 偷走脑红标签页
-local StealBrainrotTab = window:Tab("偷走脑红",'6035145364')
+local StealBrainrotTab = window:Tab("偷走脑红",'')
 
 local sbSection2 = StealBrainrotTab:section("偷走脑红脚本",true)
 
@@ -535,7 +541,7 @@ sbSection2:Button("偷走脑红6",function()
 end)
 
 -- 死铁轨标签页
-local DeadRailsTab = window:Tab("死铁轨",'6035145364')
+local DeadRailsTab = window:Tab("死铁轨",'92237541628279')
 
 local drSection = DeadRailsTab:section("死铁轨脚本",true)
 
@@ -564,7 +570,7 @@ drSection:Button("死铁轨7",function()
 end)
 
 -- 被遗弃标签页
-local ForsakenTab = window:Tab("被遗弃",'6035145364')
+local ForsakenTab = window:Tab("被遗弃",'92237541628279')
 
 local forsakenSection = ForsakenTab:section("被遗弃脚本",true)
 
@@ -596,7 +602,7 @@ forsakenSection:Button("被遗弃6",function()
 end)
 
 -- UI设置标签页
-local SettingsTab = window:Tab("UI设置",'6035145364')
+local SettingsTab = window:Tab("UI设置",'92237541628279')
 
 local settingsSection = SettingsTab:section("UI设置",true)
 
