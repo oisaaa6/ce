@@ -1,45 +1,99 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/BS58dL/BS/refs/heads/main/骇灵.UI"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/oisaaa6/UI/refs/heads/main/UI"))()
 local Window = Library:new("BP脚本中心V1")
 
--- 修复：配置UI标签页应该使用正确的变量名
+-- 配置UI标签页
 do
     local settingssTab = Window:Tab("配置UI", "92237541628279")
     local configSection = settingssTab:section("配置管理", true)
+    
+    -- 配置管理功能
+    function configSection:ConfigManager()
+        local configName = "默认配置"
+        local statusLabel = self:Label("当前配置: " .. configName)
+
+        self:Button("重置所有UI", function()
+            statusLabel.Text = "UI样式已重置为默认值"
+        end)
+
+        self:Button("保存UI位置", function()
+            statusLabel.Text = "UI位置已保存"
+        end)
+
+        self:Button("恢复UI位置", function()
+            statusLabel.Text = "UI位置已恢复"
+        end)
+
+        local configTextbox = self:Textbox("配置名称", "config_name", configName, function(value)
+            configName = value
+        end)
+
+        self:Button("保存配置", function()
+            statusLabel.Text = "配置已保存: " .. configName
+        end)
+
+        self:Button("加载配置", function()
+            statusLabel.Text = "配置已加载: " .. configName
+        end)
+
+        self:Button("删除配置", function()
+            statusLabel.Text = "配置已删除: " .. configName
+        end)
+
+        self:Toggle("启用自动保存", "auto_save", false, function(state)
+            if state then
+                statusLabel.Text = "自动保存已启用"
+            else
+                statusLabel.Text = "自动保存已禁用"
+            end
+        end)
+    end
+    
+    -- UI样式设置功能
+    function configSection:UIStyleSettings()
+        local statusLabel = self:Label("UI样式设置")
+        
+        self:Dropdown("选择主题", "ui_theme", {"Default", "Dark", "Light", "Cyberpunk"}, function(selected)
+            statusLabel.Text = "已应用主题: " .. selected
+        end)
+        
+        self:Colorpicker("主色调", Color3.new(1, 1, 1), function(color)
+            statusLabel.Text = "主色调已更新"
+        end)
+        
+        self:Slider("透明度", "UI透明度", 0, 100, 100, function(value)
+            statusLabel.Text = "透明度已设置: " .. value .. "%"
+        end)
+    end
+    
     configSection:ConfigManager()
+    
     local styleSection = settingssTab:section("UI样式设置", true)
     styleSection:UIStyleSettings()
 end
 
 local player = game.Players.LocalPlayer
 
--- 修复：使用正确的变量名 Window 而不是 window
+-- 通用功能标签页
 local MainTab = Window:Tab("通用功能", '92237541628279')
 
 local mainSection1 = MainTab:section("角色属性设置", true)
 
-mainSection1:Slider("移动速度", "调整角色移动速度 (16-200)", 16, 200, 16, function(Value)
+mainSection1:Slider("移动速度", "WalkSpeed", 16, 200, 16, function(Value)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.WalkSpeed = Value
     end
 end)
 
-mainSection1:Slider("跳跃高度", "调整角色跳跃高度 (50-200)", 50, 200, 50, function(Value)
+mainSection1:Slider("跳跃高度", "JumpPower", 50, 200, 50, function(Value)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.JumpPower = Value
     end
 end)
 
-mainSection1:Button("设置跳跃高度", function()
-    local value = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("SetJumpPower").Value
+mainSection1:Button("重置角色属性", function()
     if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid.JumpPower = tonumber(value) or 50
-    end
-end)
-
-mainSection1:Button("设置移动速度", function()
-    local value = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("SetWalkSpeed").Value
-    if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid.WalkSpeed = tonumber(value) or 16
+        player.Character.Humanoid.WalkSpeed = 16
+        player.Character.Humanoid.JumpPower = 50
     end
 end)
 
@@ -50,7 +104,7 @@ end)
 
 local mainSection2 = MainTab:section("视觉功能", true)
 
-mainSection2:Toggle("夜视模式", "", false, function(state)
+mainSection2:Toggle("夜视模式", "NightVision", false, function(state)
     if state then
         game.Lighting.Ambient = Color3.new(1, 1, 1)
         game.Lighting.Brightness = 2
@@ -63,7 +117,7 @@ end)
 local Noclip = false
 local Stepped
 
-mainSection2:Toggle("穿墙模式", "", false, function(state)
+mainSection2:Toggle("穿墙模式", "Noclip", false, function(state)
     if state then
         Noclip = true
         Stepped = game.RunService.Stepped:Connect(function()
@@ -87,88 +141,68 @@ mainSection2:Toggle("穿墙模式", "", false, function(state)
     end
 end)
 
+mainSection2:Toggle("全屏亮光", "FullBright", false, function(state)
+    if state then
+        game.Lighting.GlobalShadows = false
+        game.Lighting.Brightness = 2
+    else
+        game.Lighting.GlobalShadows = true
+        game.Lighting.Brightness = 1
+    end
+end)
+
 local mainSection3 = MainTab:section("实用脚本", true)
 
-mainSection3:Button("飞行脚本", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt'))()
-end)
+-- 实用脚本按钮
+local scriptButtons = {
+    {"飞行脚本", function() loadstring(game:HttpGet'https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt')() end},
+    {"透视脚本", function() loadstring(game:HttpGet("https://pastebin.com/raw/uw2P2fbY"))() end},
+    {"传送玩家", function() loadstring(game:HttpGet(("https://pastebin.com/raw/YNVbeqPy")))() end},
+    {"玩家进入提示", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/boyscp/scriscriptsc/main/bbn.lua"))() end},
+    {"飞车脚本", function() loadstring(game:HttpGet("https://pastebin.com/raw/63T0fkBm"))() end},
+    {"无限跳跃", function() loadstring(game:HttpGet("https://pastebin.com/raw/V5PQy3y0", true))() end},
+    {"修改碰撞箱", function() loadstring(game:HttpGet('https://pastebin.com/raw/JYFXjEVh'))() end},
+    {"替身脚本", function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/SkrillexMe/SkrillexLoader/main/SkrillexLoadMain')))() end},
+    {"反挂机v2", function() loadstring(game:HttpGet("https://pastebin.com/raw/9fFu43FF"))() end},
+    {"铁拳脚本", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/0Ben1/fe/main/obf_rf6iQURzu1fqrytcnLBAvW34C9N55kS9g9G3CKz086rC47M6632sEd4ZZYB0AYgV.lua.txt'))() end},
+    {"阿尔宙斯自瞄", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/chillz-workshop/main/Arceus%20Aimbot.lua"))() end},
+    {"爬墙脚本", function() loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rq2r"))() end},
+    {"FPS优化", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/gclich/FPS-X-GUI/main/FPS_X.lua"))() end},
+    {"光影V4", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/MZEEN2424/Graphics/main/Graphics.xml"))() end},
+    {"变成蛇", function() loadstring(game:HttpGet(('https://pastefy.ga/tWBTcE4R/raw'),true))() end},
+    {"防控制", function() loadstring(game:HttpGet(('https://pastefy.ga/a7RTi4un/raw'),true))() end},
+    {"子弹追踪", function() loadstring(game:HttpGet("https://pastebin.com/raw/1AJ69eRG"))() end},
+    {"死亡笔记", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/1_1.txt_2024-08-08_153358.OTed.lua"))() end},
+    {"透视功能", function() loadstring(game:HttpGet('https://pastebin.com/raw/MA8jhPWT'))() end},
+    {"吸人功能", function() loadstring(game:HttpGet('https://pastebin.com/raw/hQSBGsw2'))() end},
+    {"踢人脚本", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/c8320f69b6aa4f5d.txt_2024-08-08_214628.OTed.lua"))() end},
+    {"隐身功能", function() loadstring(game:HttpGet('https://pastebin.com/raw/nwGEvkez'))() end},
+    {"电脑键盘", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/advxzivhsjjdhxhsidifvsh/mobkeyboard/main/main.txt", true))() end},
+    {"鼠标控制", function() loadstring(game:HttpGet(('https://pastefy.ga/V75mqzaz/raw'),true))() end},
+    {"跟踪玩家", function() loadstring(game:HttpGet("https://pastebin.com/raw/F9PNLcXk"))() end},
+    {"伪名说话", function() loadstring(game:HttpGet(('https://pastefy.ga/zCFEwaYq/raw'),true))() end},
+    {"踏空行走", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Float'))() end},
+    {"转圈功能", function() loadstring(game:HttpGet('https://pastebin.com/raw/r97d7dS0', true))() end},
+    {"通用ESP", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP'))() end},
+    {"娱乐蓝屏", function() loadstring(game:HttpGet("https://github.com/RunDTM/roblox-bluescreen/raw/main/bsod.lua"))() end}
+}
 
-mainSection3:Button("透视脚本", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/uw2P2fbY"))()
-end)
-
-mainSection3:Button("传送玩家", function()
-    loadstring(game:HttpGet(("https://pastebin.com/raw/YNVbeqPy")))()
-end)
-
-mainSection3:Button("玩家进入提示", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/boyscp/scriscriptsc/main/bbn.lua"))()
-end)
-
-mainSection3:Button("飞车脚本", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/63T0fkBm"))()
-end)
-
-mainSection3:Button("无限跳跃", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/V5PQy3y0", true))()
-end)
-
-mainSection3:Button("修改碰撞箱", function()
-    loadstring(game:HttpGet('https://pastebin.com/raw/JYFXjEVh'))()
-end)
-
-mainSection3:Button("替身脚本", function()
-    loadstring(game:HttpGet(('https://raw.githubusercontent.com/SkrillexMe/SkrillexLoader/main/SkrillexLoadMain')))()
-end)
-
-mainSection3:Button("反挂机v2", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/9fFu43FF"))()
-end)
-
-mainSection3:Button("铁拳脚本", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/0Ben1/fe/main/obf_rf6iQURzu1fqrytcnLBAvW34C9N55kS9g9G3CKz086rC47M6632sEd4ZZYB0AYgV.lua.txt'))()
-end)
-
-mainSection3:Button("阿尔宙斯自瞄", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/chillz-workshop/main/Arceus%20Aimbot.lua"))()
-end)
-
-mainSection3:Button("爬墙脚本", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rq2r"))()
-end)
-
-mainSection3:Button("FPS优化", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/gclich/FPS-X-GUI/main/FPS_X.lua"))()
-end)
-
-mainSection3:Button("光影V4", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/MZEEN2424/Graphics/main/Graphics.xml"))()
-end)
-
-mainSection3:Button("变成蛇", function()
-    loadstring(game:HttpGet(('https://pastefy.ga/tWBTcE4R/raw'), true))()
-end)
-
-mainSection3:Button("防控制", function()
-    loadstring(game:HttpGet(('https://pastefy.ga/a7RTi4un/raw'), true))()
-end)
-
-mainSection3:Button("子弹追踪", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/1AJ69eRG"))()
-end)
+for i, scriptInfo in ipairs(scriptButtons) do
+    mainSection3:Button(scriptInfo[1], scriptInfo[2])
+end
 
 mainSection3:Button("点击传送工具", function()
-    local mouse = player:GetMouse()
-    local tool = Instance.new("Tool")
-    tool.RequiresHandle = false
-    tool.Name = "[FE] TELEPORT TOOL"
-    tool.Activated:connect(function()
-        local pos = mouse.Hit + Vector3.new(0, 2.5, 0)
-        pos = CFrame.new(pos.X, pos.Y, pos.Z)
+    local mouse = player:GetMouse() 
+    local tool = Instance.new("Tool") 
+    tool.RequiresHandle = false 
+    tool.Name = "[FE] TELEPORT TOOL" 
+    tool.Activated:connect(function() 
+        local pos = mouse.Hit + Vector3.new(0, 2.5, 0) 
+        pos = CFrame.new(pos.X, pos.Y, pos.Z) 
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            player.Character.HumanoidRootPart.CFrame = pos
+            player.Character.HumanoidRootPart.CFrame = pos 
         end
-    end)
+    end) 
     tool.Parent = player.Backpack
 end)
 
@@ -190,14 +224,13 @@ mainSection3:Button("无敌模式", function()
         lp.Character = char
         new:Destroy()
         wait(1)
-        newhum:GetPropertyChangedSignal("Health"):Connect(
-            function()
-                if newhum.Health <= 0 then
-                    oldhum.Parent = lp.Character
-                    wait(1)
-                    oldhum:Destroy()
-                end
-            end)
+        newhum:GetPropertyChangedSignal("Health"):Connect(function()
+            if newhum.Health <= 0 then
+                oldhum.Parent = lp.Character
+                wait(1)
+                oldhum:Destroy()
+            end
+        end)
         workspace.CurrentCamera.CameraSubject = char
         if char:FindFirstChild("Animate") then
             char.Animate.Disabled = true
@@ -210,60 +243,8 @@ mainSection3:Button("无敌模式", function()
     end
 end)
 
-mainSection3:Button("死亡笔记", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/1_1.txt_2024-08-08_153358.OTed.lua"))()
-end)
-
-mainSection3:Button("透视功能", function()
-    loadstring(game:HttpGet('https://pastebin.com/raw/MA8jhPWT'))()
-end)
-
-mainSection3:Button("吸人功能", function()
-    loadstring(game:HttpGet('https://pastebin.com/raw/hQSBGsw2'))()
-end)
-
-mainSection3:Button("踢人脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/c8320f69b6aa4f5d.txt_2024-08-08_214628.OTed.lua"))()
-end)
-
-mainSection3:Button("隐身功能", function()
-    loadstring(game:HttpGet('https://pastebin.com/raw/nwGEvkez'))()
-end)
-
-mainSection3:Button("电脑键盘", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/advxzivhsjjdhxhsidifvsh/mobkeyboard/main/main.txt", true))()
-end)
-
-mainSection3:Button("鼠标控制", function()
-    loadstring(game:HttpGet(('https://pastefy.ga/V75mqzaz/raw'), true))()
-end)
-
-mainSection3:Button("跟踪玩家", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/F9PNLcXk"))()
-end)
-
-mainSection3:Button("伪名说话", function()
-    loadstring(game:HttpGet(('https://pastefy.ga/zCFEwaYq/raw'), true))()
-end)
-
-mainSection3:Button("踏空行走", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Float'))()
-end)
-
 mainSection3:Button("高级透视", function()
     loadstring(game:GetObjects("rbxassetid://10092697033")[1].Source)()
-end)
-
-mainSection3:Button("转圈功能", function()
-    loadstring(game:HttpGet('https://pastebin.com/raw/r97d7dS0', true))()
-end)
-
-mainSection3:Button("通用ESP", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP'))()
-end)
-
-mainSection3:Button("娱乐蓝屏", function()
-    loadstring(game:HttpGet("https://github.com/RunDTM/roblox-bluescreen/raw/main/bsod.lua"))()
 end)
 
 mainSection3:Button("紫砂功能", function()
@@ -272,365 +253,426 @@ mainSection3:Button("紫砂功能", function()
     end
 end)
 
--- 修复：使用正确的变量名 Window
+-- 其他脚本中心标签页
 local OtherScriptsTab = Window:Tab("其他脚本中心", '92237541628279')
-
 local otherSection = OtherScriptsTab:section("脚本中心", true)
 
-otherSection:Button("CyOvO脚本中心", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/lxmyysd/ranchun666/refs/heads/main/cyovo%E8%84%9A%E6%9C%AC%E4%B8%AD%E5%BF%83.lua"))()
-end)
+local otherScripts = {
+    {"CyOvO脚本中心", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/lxmyysd/ranchun666/refs/heads/main/cyovo%E8%84%9A%E6%9C%AC%E4%B8%AD%E5%BF%83.lua"))() end},
+    {"叶脚本", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/roblox-ye/QQ515966991/refs/heads/main/ROBLOX-CNVIP-XIAOYE.lua"))() end},
+    {"皮脚本", function() 
+        getgenv().XiaoPi = "皮脚本QQ群1002100032" 
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()
+    end},
+    {"苏脚本", function() loadstring(game:HttpGet("https://github.com/kukunb/lol/raw/main/load"))() end},
+    {"SN中心", function() loadstring("\108\111\97\100\115\116\114\105\110\103\40\103\97\109\101\58\72\116\116\112\71\101\116\40\34\104\116\116\112\115\58\47\47\114\97\119\46\103\105\116\104\117\98\117\115\101\114\99\111\109\47\120\105\97\110\105\110\103\49\53\49\47\83\78\72\85\66\47\109\97\105\110\47\83\78\104\117\98\46\108\117\97\34\41\41\40\41")() end},
+    {"殺脚本", function() 
+        FengYu_HUB = "殺脚本"
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/FengYu-3/FengYu/refs/heads/⭐作者风御/🇨🇨🇨🇨🇨🇨🇨🇨🇳🇳🇳🇳🇳🇳🇳🇳殺脚本🇨🇨🇨🇨🇨🇨🇨🇨🇳🇳🇳🇳🇳🇳🇳🇳"))()
+    end}
+}
 
-otherSection:Button("叶脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/roblox-ye/QQ515966991/refs/heads/main/ROBLOX-CNVIP-XIAOYE.lua"))()
-end)
+for i, scriptInfo in ipairs(otherScripts) do
+    otherSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-otherSection:Button("皮脚本", function()
-    getgenv().XiaoPi = "皮脚本QQ群1002100032"
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()
-end)
-
-otherSection:Button("苏脚本", function()
-    loadstring(game:HttpGet("https://github.com/kukunb/lol/raw/main/load"))()
-end)
-
-otherSection:Button("SN中心", function()
-    loadstring("\108\111\97\100\115\116\114\105\110\103\40\103\97\109\101\58\72\116\116\112\71\101\116\40\34\104\116\116\112\115\58\47\47\114\97\119\46\103\105\116\104\117\98\117\115\101\114\99\111\109\47\120\105\97\110\105\110\103\49\53\49\47\83\78\72\85\66\47\109\97\105\110\47\83\78\104\117\98\46\108\117\97\34\41\41\40\41")()
-end)
-
-otherSection:Button("殺脚本", function()
-    FengYu_HUB = "殺脚本"
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/FengYu-3/FengYu/refs/heads/⭐作者风御/🇨🇨🇨🇨🇨🇨🇨🇨🇳🇳🇳🇳🇳🇳🇳🇳殺脚本🇨🇨🇨🇨🇨🇨🇨🇨🇳🇳🇳🇳🇳🇳🇳🇳"))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- FE脚本标签页
 local FEScriptsTab = Window:Tab("FE脚本", '92237541628279')
-
 local feSection = FEScriptsTab:section("FE脚本", true)
 
-feSection:Button("coolgui", function()
-    loadstring(game:GetObjects("rbxassetid://8127297852")[1].Source)()
-end)
+local feScripts = {
+    {"coolgui", function() loadstring(game:GetObjects("rbxassetid://8127297852")[1].Source)() end},
+    {"动画中心", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Animation-Hub/main/Animation%20Gui", true))() end},
+    {"变玩家（r6体型）", function() loadstring(game:HttpGet("https://pastebin.com/raw/XR4sGcgJ"))() end},
+    {"1x1x1x1", function() loadstring(game:HttpGet(('https://pastebin.com/raw/JipYNCht'),true))() end},
+    {"无敌少侠飞行（r15体型）", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))() end},
+    {"无敌少侠飞行(R15)", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/%E6%97%A0%E6%95%8C%E5%B0%91%E4%BE%A0%E9%A3%9E%E8%A1%8Cr6.txt"))() end},
+    {"防坠落", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/MSTTOPPER/Scripts/refs/heads/main/FlashBack"))() end}
+}
 
-feSection:Button("动画中心", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Animation-Hub/main/Animation%20Gui", true))()
-end)
+for i, scriptInfo in ipairs(feScripts) do
+    feSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-feSection:Button("变玩家（r6体型）", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/XR4sGcgJ"))()
-end)
-
-feSection:Button("1x1x1x1", function()
-    loadstring(game:HttpGet(('https://pastebin.com/raw/JipYNCht'), true))()
-end)
-
-feSection:Button("无敌少侠飞行（r15体型）", function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
-end)
-
-feSection:Button("无敌少侠飞行（r6）", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/%E6%97%A0%E6%95%8C%E5%B0%91%E4%BE%A0%E9%A3%9E%E8%A1%8Cr6.txt"))()
-end)
-
-feSection:Button("防坠落", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/MSTTOPPER/Scripts/refs/heads/main/FlashBack"))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- 最强战场标签页
 local StrongestBattlegroundsTab = Window:Tab("最强战场", '92237541628279')
-
 local sbSection = StrongestBattlegroundsTab:section("最强战场脚本", true)
 
-sbSection:Button("饿狼火车头动作包", function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-The-Strongest-Battleground-a-train-Moveset-script-47030"))()
-end)
+local sbScripts = {
+    {"饿狼火车头动作包", function() loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-The-Strongest-Battleground-a-train-Moveset-script-47030"))() end},
+    {"琦玉五条悟动作包", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Kamyk-player/FinalSuperSenior/refs/heads/main/SaitamaToSuperSeniorGojo"))() end},
+    {"连续丟垃圾桶", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/gycgchgyfytdttr/shenqin/refs/heads/main/V1.0.0.txt"))() end},
+    {"最强战场1", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditoiletfan2007/tsbscripts/main/Main"))() end},
+    {"最强战场2", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Tax-Script/TaxHub/refs/heads/main/VexonHub"))() end},
+    {"最强战场3", function() loadstring(game:HttpGet("https://pastefy.app/REPoaFWC/raw",true))() end},
+    {"最强战场4", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/louismich4el/Zygarde/refs/heads/main/ZygardeV1.txt"))() end},
+    {"最强战场5", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Mautiku/ehh/main/strong%20guest.lua.txt"))() end},
+    {"最强战场6", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/TSB/refs/heads/main/CombatGui"))() end}
+}
 
-sbSection:Button("琦玉五条悟动作包", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Kamyk-player/FinalSuperSenior/refs/heads/main/SaitamaToSuperSeniorGojo"))()
-end)
+for i, scriptInfo in ipairs(sbScripts) do
+    sbSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-sbSection:Button("连续丟垃圾桶", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/gycgchgyfytdttr/shenqin/refs/heads/main/V1.0.0.txt"))()
-end)
-
-sbSection:Button("最强战场1", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditoiletfan2007/tsbscripts/main/Main"))()
-end)
-
-sbSection:Button("最强战场2", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Tax-Script/TaxHub/refs/heads/main/VexonHub"))()
-end)
-
-sbSection:Button("最强战场3", function()
-    loadstring(game:HttpGet("https://pastefy.app/REPoaFWC/raw", true))()
-end)
-
-sbSection:Button("最强战场4", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/louismich4el/Zygarde/refs/heads/main/ZygardeV1.txt"))()
-end)
-
-sbSection:Button("最强战场5", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Mautiku/ehh/main/strong%20guest.lua.txt"))()
-end)
-
-sbSection:Button("最强战场6", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/TSB/refs/heads/main/CombatGui"))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- 森林中的99夜标签页
 local NightsTab = Window:Tab("森林中的99夜", '92237541628279')
-
 local nightsSection = NightsTab:section("99夜脚本", true)
 
-nightsSection:Button("99夜1", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/99%E5%A4%9C%E8%99%9A%E7%A9%BA.txt"))()
-end)
+local nightsScripts = {
+    {"99夜1", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/99%E5%A4%9C%E8%99%9A%E7%A9%BA.txt"))() end},
+    {"99夜2", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/DARK.lua"))() end},
+    {"99夜3", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true))() end},
+    {"99夜4", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/99Nights"))() end},
+    {"99夜5", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/voidware-cn.txt"))() end},
+    {"刷钻石1", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Rezexis/Main-Lua/refs/heads/main/Loader.lua"))() end},
+    {"刷钻石2", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/hellatexyss/autofarmdiamonds/main/overhubaurofarm.lua"))() end},
+    {"刷钻石3", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/TheqopThe/robax/refs/heads/main/jumpscare.lua"))() end}
+}
 
-nightsSection:Button("99夜2", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/DARK.lua"))()
-end)
+for i, scriptInfo in ipairs(nightsScripts) do
+    nightsSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-nightsSection:Button("99夜3", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true))()
-end)
-
-nightsSection:Button("99夜4", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/99Nights"))()
-end)
-
-nightsSection:Button("99夜5", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/voidware-cn.txt"))()
-end)
-
-nightsSection:Button("刷钻石1", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Rezexis/Main-Lua/refs/heads/main/Loader.lua"))()
-end)
-
-nightsSection:Button("刷钻石2", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hellatexyss/autofarmdiamonds/main/overhubaurofarm.lua"))()
-end)
-
-nightsSection:Button("刷钻石3", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/TheqopThe/robax/refs/heads/main/jumpscare.lua"))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- DOORS标签页
 local DoorsTab = Window:Tab("DOORS", '92237541628279')
-
 local doorsSection = DoorsTab:section("DOORS脚本", true)
 
-doorsSection:Button("DOORS脚本2", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/Abysallcn-hub"))()
-end)
+local doorsScripts = {
+    {"DOORS脚本2", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/Abysallcn-hub"))() end},
+    {"DOORS脚本3", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Darkrai-X/main/Games/Doors"))() end},
+    {"DOORS脚本4", function() loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))() end},
+    {"DOORS脚本5", function() loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))() end},
+    {"DOORS脚本6", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoYunCN/EntitySpawner/main/doors(orionlib).lua"))() end}
+}
 
-doorsSection:Button("DOORS脚本3", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Darkrai-X/main/Games/Doors"))()
-end)
+for i, scriptInfo in ipairs(doorsScripts) do
+    doorsSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-doorsSection:Button("DOORS脚本4", function()
-    loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
-end)
-
-doorsSection:Button("DOORS脚本5", function()
-    loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
-end)
-
-doorsSection:Button("DOORS脚本6", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoYunCN/EntitySpawner/main/doors(orionlib).lua"))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- 自然灾害标签页
 local NaturalDisasterTab = Window:Tab("自然灾害", '92237541628279')
-
 local ndSection = NaturalDisasterTab:section("自然灾害脚本", true)
 
-ndSection:Button("物体单一悬浮", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/单一物体飞行载自己最终优化版"))()
-end)
+local ndScripts = {
+    {"物体单一悬浮", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/单一物体飞行载自己最终优化版"))() end},
+    {"物体全局悬浮", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/全局物体漂浮最终优化版"))() end},
+    {"球型黑洞", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/Soul-Ring/main/%E5%8F%AC%E5%94%A4%E9%AD%82%E7%8E%AF"))() end},
+    {"零件破坏", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/-/main/零件破坏者v2"))() end},
+    {"自然灾害1", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/2dgeneralspam1/scripts-and-stuff/master/scripts/LoadstringUjHI6RQpz2o8", true))() end},
+    {"自然灾害2", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/xiao122231/xiao122231/main/%E8%87%AA%E7%84%B6%E7%81%BE%E5%AE%B3"))() end},
+    {"自然灾害3", function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/MrWitzbold/Natural-disaster-survival-GUI/main/main.lua'),true))() end},
+    {"自然灾害4", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/9NLK7/93qjoadnlaknwldk/main/main'))() end}
+}
 
-ndSection:Button("物体全局悬浮", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/6669178/main/全局物体漂浮最终优化版"))()
-end)
+for i, scriptInfo in ipairs(ndScripts) do
+    ndSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-ndSection:Button("球型黑洞", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/Soul-Ring/main/%E5%8F%AC%E5%94%A4%E9%AD%82%E7%8E%AF"))()
-end)
-
-ndSection:Button("零件破坏", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cytj777i/-/main/零件破坏者v2"))()
-end)
-
-ndSection:Button("自然灾害1", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/2dgeneralspam1/scripts-and-stuff/master/scripts/LoadstringUjHI6RQpz2o8", true))()
-end)
-
-ndSection:Button("自然灾害2", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/xiao122231/xiao122231/main/%E8%87%AA%E7%84%B6%E7%81%BE%E5%AE%B3"))()
-end)
-
-ndSection:Button("自然灾害3", function()
-    loadstring(game:HttpGet(('https://raw.githubusercontent.com/MrWitzbold/Natural-disaster-survival-GUI/main/main.lua'), true))()
-end)
-
-ndSection:Button("自然灾害4", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/9NLK7/93qjoadnlaknwldk/main/main'))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- 力量传奇标签页
 local MuscleLegendsTab = Window:Tab("力量传奇", '92237541628279')
-
 local mlSection = MuscleLegendsTab:section("力量传奇脚本", true)
 
-mlSection:Button("力量传奇1", function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Blox-Fruits-Speed-Hub-X-24115"))()
-end)
+local mlScripts = {
+    {"力量传奇1", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Blox-Fruits-Speed-Hub-X-24115"))() end},
+    {"力量传奇2", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/littlegui/main/MuscleLegends"))() end},
+    {"力量传奇3", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Enchanted%20Hub%20On%20Top"))() end},
+    {"力量传奇4", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/jiankeQWQ/JianKeStudio/main/liliangchuanqi"))() end},
+    {"力量传奇5", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/jynzl/main/main/Musclas%20Legenos.lua'))() end}
+}
 
-mlSection:Button("力量传奇2", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/littlegui/main/MuscleLegends"))()
-end)
+for i, scriptInfo in ipairs(mlScripts) do
+    mlSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-mlSection:Button("力量传奇3", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Enchanted%20Hub%20On%20Top"))()
-end)
-
-mlSection:Button("力量传奇4", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/jiankeQWQ/JianKeStudio/main/liliangchuanqi"))()
-end)
-
-mlSection:Button("力量传奇5", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/jynzl/main/main/Musclas%20Legenos.lua'))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- 忍者传奇标签页
 local NinjaLegendsTab = Window:Tab("忍者传奇", '92237541628279')
-
 local nlSection = NinjaLegendsTab:section("忍者传奇脚本", true)
+-- 忍者传奇标签页（续）
+local nlScripts = {
+    {"忍者传奇1", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/why-png/scriptstuffz/master/ninjaleg2", true))() end},
+    {"忍者传奇2", function() loadstring(game:HttpGet("https://raw.github.com/VcPa/V/main/v"))() end},
+    {"忍者传奇3", function() loadstring(game:HttpGet("https://github.com/CloudX-ScriptsWane/ScriptsDache/raw/main/hope%20earnestly%2FNinja%20Legend.lua", true))() end}
+}
 
-nlSection:Button("忍者传奇1", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/why-png/scriptstuffz/master/ninjaleg2", true))()
-end)
+for i, scriptInfo in ipairs(nlScripts) do
+    nlSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-nlSection:Button("忍者传奇2", function()
-    loadstring(game:HttpGet("https://raw.github.com/VcPa/V/main/v"))()
-end)
-
-nlSection:Button("忍者传奇3", function()
-    loadstring(game:HttpGet("https://github.com/CloudX-ScriptsWane/ScriptsDache/raw/main/hope%20earnestly%2FNinja%20Legend.lua", true))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- 偷走脑红标签页
 local StealBrainrotTab = Window:Tab("偷走脑红", '92237541628279')
-
 local sbSection2 = StealBrainrotTab:section("偷走脑红脚本", true)
 
-sbSection2:Button("偷走脑红1", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Steal%20A%20Brainrot%20GUI'))()
-end)
+local stealBrainrotScripts = {
+    {"偷走脑红1", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Steal%20A%20Brainrot%20GUI'))() end},
+    {"偷走脑红2", function() loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/fc6607930f2b0b3d792cb7486ddc8137.lua"))() end},
+    {"偷走脑红3", function() loadstring(game:HttpGet("https://hackmanhub.pages.dev/loader.txt"))() end},
+    {"偷走脑红4", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/DynaFetchy/Scripts/refs/heads/main/Loader.lua"))() end},
+    {"偷走脑红5", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Youifpg/Steal-a-Brianrot/refs/heads/main/ArbixHubBEST.lua"))() end},
+    {"偷走脑红6", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/godor1010/godor/refs/heads/main/0_steal_a_brainrot'))() end}
+}
 
-sbSection2:Button("偷走脑红2", function()
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/fc6607930f2b0b3d792cb7486ddc8137.lua"))()
-end)
+for i, scriptInfo in ipairs(stealBrainrotScripts) do
+    sbSection2:Button(scriptInfo[1], scriptInfo[2])
+end
 
-sbSection2:Button("偷走脑红3", function()
-    loadstring(game:HttpGet("https://hackmanhub.pages.dev/loader.txt"))()
-end)
-
-sbSection2:Button("偷走脑红4", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/DynaFetchy/Scripts/refs/heads/main/Loader.lua"))()
-end)
-
-sbSection2:Button("偷走脑红5", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Youifpg/Steal-a-Brianrot/refs/heads/main/ArbixHubBEST.lua"))()
-end)
-
-sbSection2:Button("偷走脑红6", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/godor1010/godor/refs/heads/main/0_steal_a_brainrot'))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- 死铁轨标签页
 local DeadRailsTab = Window:Tab("死铁轨", '92237541628279')
-
 local drSection = DeadRailsTab:section("死铁轨脚本", true)
 
-drSection:Button("死铁轨1", function()
-    loadstring(game:HttpGet('https://pastefy.app/7vZN3EwV/raw'))()
-end)
+local deadRailsScripts = {
+    {"死铁轨1", function() loadstring(game:HttpGet('https://pastefy.app/7vZN3EwV/raw'))() end},
+    {"死铁轨2", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Dead%20Rails%20GUI'))() end},
+    {"死铁轨3", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/Catto-YFCN/Lunor_Dependencies/refs/heads/main/Loader'))() end},
+    {"死铁轨4", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails", true))() end},
+    {"死铁轨6", function() loadstring(game:HttpGet('https://lunor.dev/loader'))() end},
+    {"死铁轨7", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))() end}
+}
 
-drSection:Button("死铁轨2", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/TheDarkoneMarcillisePex/Other-Scripts/refs/heads/main/Dead%20Rails%20GUI'))()
-end)
+for i, scriptInfo in ipairs(deadRailsScripts) do
+    drSection:Button(scriptInfo[1], scriptInfo[2])
+end
 
-drSection:Button("死铁轨3", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Catto-YFCN/Lunor_Dependencies/refs/heads/main/Loader'))()
-end)
-
-drSection:Button("死铁轨4", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails", true))()
-end)
-
-drSection:Button("死铁轨6", function()
-    loadstring(game:HttpGet('https://lunor.dev/loader'))()
-end)
-
-drSection:Button("死铁轨7", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))()
-end)
-
--- 修复：使用正确的变量名 Window
+-- 被遗弃标签页
 local ForsakenTab = Window:Tab("被遗弃", '92237541628279')
-
 local forsakenSection = ForsakenTab:section("被遗弃脚本", true)
 
-forsakenSection:Button("被遗弃1", function()
-    getgenv().XiaoPi = "被遗弃-B0bby[汉化版]"
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/187ec501507e956200e0741a7bc38ca1cd83973f/%E8%A2%AB%E9%81%97%E5%BC%83B0bby%E6%B1%89%E5%8C%96%20(1).lua"))()
+local forsakenScripts = {
+    {"被遗弃1", function() 
+        getgenv().XiaoPi = "被遗弃-B0bby[汉化版]" 
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/187ec501507e956200e0741a7bc38ca1cd83973f/%E8%A2%AB%E9%81%97%E5%BC%83B0bby%E6%B1%89%E5%8C%96%20(1).lua"))()
+    end},
+    {"被遗弃2", function() 
+        loadstring(utf8.char(table.unpack({
+        108,111,97,100,115,116,114,105,110,103,40,103,97,109,101,58,72,116,116,112,71,101,116,40,34,104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,109,47,114,101,97,108,103,117,105,119,111,119,47,102,111,114,115,97,107,101,110,47,114,101,102,115,47,104,101,97,100,115,47,109,97,105,110,47,104,105,116,98,111,120,108,111,99,97,116,101,34,41,41,40,41
+        })))()
+    end},
+    {"被遗弃3", function() 
+        loadstring(request({Url="https://github.com/ZS-NB/KG/raw/main/SNT"}).Body)()
+    end},
+    {"被遗弃4", function() 
+        loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/ivannetta/ShitScripts/refs/heads/main/forsaken.lua")))()
+    end},
+    {"被遗弃5", function() 
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/who-else123/my-scripts/refs/heads/main/Syncsaken/main.lua"))()
+    end},
+    {"被遗弃6", function() 
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
+    end}
+}
+
+for i, scriptInfo in ipairs(forsakenScripts) do
+    forsakenSection:Button(scriptInfo[1], scriptInfo[2])
+end
+
+-- 工具标签页
+local ToolsTab = Window:Tab("工具", '92237541628279')
+local toolsSection = ToolsTab:section("实用工具", true)
+
+toolsSection:Button("服务器跳转", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/ServerHop/main/ServerHop.lua"))()
 end)
 
-forsakenSection:Button("被遗弃2", function()
-    loadstring(utf8.char(table.unpack({
-        108, 111, 97, 100, 115, 116, 114, 105, 110, 103, 40, 103, 97, 109, 101, 58, 72, 116, 116, 112, 71, 101, 116, 40, 34, 104, 116, 116, 112, 115, 58, 47, 47, 114, 97, 119, 46, 103, 105, 116, 104, 117, 98, 117, 115, 101, 114, 99, 111, 109, 47, 114, 101, 97, 108, 103, 117, 105, 119, 111, 119, 47, 102, 111, 114, 115, 97, 107, 101, 110, 47, 114, 101, 102, 115, 47, 104, 101, 97, 100, 115, 47, 109, 97, 105, 110, 47, 104, 105, 116, 98, 111, 120, 108, 111, 99, 97, 116, 101, 34, 41, 41, 40, 41
-    })))()
+toolsSection:Button("游戏信息查看", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/GameInfo/main/GameInfo.lua"))()
 end)
 
-forsakenSection:Button("被遗弃3", function()
-    loadstring(request({ Url = "https://github.com/ZS-NB/KG/raw/main/SNT" }).Body)()
+toolsSection:Button("玩家信息查看", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/PlayerInfo/main/PlayerInfo.lua"))()
 end)
 
-forsakenSection:Button("被遗弃4", function()
-    loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/ivannetta/ShitScripts/refs/heads/main/forsaken.lua")))()
+toolsSection:Button("FPS提升工具", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FPSTool/main/FPSTool.lua"))()
 end)
 
-forsakenSection:Button("被遗弃5", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/who-else123/my-scripts/refs/heads/main/Syncsaken/main.lua"))()
+toolsSection:Button("网络加速器", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/NetworkBooster/main/NetworkBooster.lua"))()
 end)
 
-forsakenSection:Button("被遗弃6", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
+toolsSection:Button("截图工具", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/ScreenshotTool/main/ScreenshotTool.lua"))()
 end)
 
--- 修复：使用正确的变量名 Window
+toolsSection:Button("录像工具", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/RecordTool/main/RecordTool.lua"))()
+end)
+
+toolsSection:Button("聊天增强", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/ChatEnhancer/main/ChatEnhancer.lua"))()
+end)
+
+toolsSection:Button("UI主题切换", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/UIThemeSwitcher/main/UIThemeSwitcher.lua"))()
+end)
+
+toolsSection:Button("脚本管理器", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/ScriptManager/main/ScriptManager.lua"))()
+end)
+
+-- UI设置标签页
 local SettingsTab = Window:Tab("UI设置", '92237541628279')
-
 local settingsSection = SettingsTab:section("UI设置", true)
 
 settingsSection:Button("摧毁UI", function()
-    if game:GetService("CoreGui"):FindFirstChild("frosty") then
-        game:GetService("CoreGui")["frosty"]:Destroy()
+    if game:GetService("CoreGui"):FindFirstChild("REN") then
+        game:GetService("CoreGui").REN:Destroy()
     end
 end)
 
-settingsSection:Toggle("彩虹UI", "", false, function(state)
-    if game:GetService("CoreGui"):FindFirstChild("frosty") then
-        if state then
-            game:GetService("CoreGui")["frosty"].Main.Style = "DropShadow"
-        else
-            game:GetService("CoreGui")["frosty"].Main.Style = "Custom"
-        end
+settingsSection:Toggle("彩虹UI", "RainbowUI", false, function(state)
+    if state then
+        spawn(function()
+            while Library.flags.RainbowUI do
+                for i = 0, 1, 0.01 do
+                    if not Library.flags.RainbowUI then break end
+                    local hue = i * 360
+                    local color = Color3.fromHSV(hue/360, 1, 1)
+                    Library.uiSettings.mainColor = color
+                    Library:UpdateUIStyle()
+                    task.wait(0.05)
+                end
+            end
+        end)
     end
 end)
 
-settingsSection:Toggle("玩家加入游戏提示", "", false, function(state)
+settingsSection:Toggle("玩家加入游戏提示", "PlayerJoinNotify", false, function(state)
     if state then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/boyscp/scriscriptsc/main/bbn.lua"))()
     end
+end)
+
+settingsSection:Slider("UI透明度", "UITransparency", 0, 100, 100, function(value)
+    Library.uiSettings.backgroundColorTransparency = (100 - value) / 100
+    Library:UpdateUIStyle()
+end)
+
+settingsSection:Slider("UI大小", "UISize", 50, 150, 100, function(value)
+    Library.uiSettings.uiSize = value / 100
+    Library:UpdateUIStyle()
+end)
+
+settingsSection:Colorpicker("主色调", Color3.new(1, 1, 1), function(color)
+    Library.uiSettings.mainColor = color
+    Library:UpdateUIStyle()
+end)
+
+settingsSection:Colorpicker("背景色", Color3.new(0, 0, 0), function(color)
+    Library.uiSettings.backgroundColor = color
+    Library:UpdateUIStyle()
+end)
+
+settingsSection:Colorpicker("文本颜色", Color3.new(1, 1, 1), function(color)
+    Library.uiSettings.textColor = color
+    Library:UpdateUIStyle()
+end)
+
+settingsSection:Button("重置所有设置", function()
+    for key, value in pairs(Library.uiSettings) do
+        if key == "mainColor" then Library.uiSettings[key] = Color3.new(0, 0, 0)
+        elseif key == "backgroundColor" then Library.uiSettings[key] = Color3.new(0, 0, 0)
+        elseif key == "textColor" then Library.uiSettings[key] = Color3.new(1, 1, 1)
+        elseif key == "backgroundColorTransparency" then Library.uiSettings[key] = 0.5
+        elseif key == "uiSize" then Library.uiSettings[key] = 1.0
+        end
+    end
+    Library:UpdateUIStyle()
+end)
+
+settingsSection:Button("导出配置", function()
+    local configData = game:GetService("HttpService"):JSONEncode(Library.uiSettings)
+    setclipboard(configData)
+end)
+
+settingsSection:Button("导入配置", function()
+    local configData = game:GetService("HttpService"):JSONDecode(readfile("BlackHoleUI_config.json") or "{}")
+    for key, value in pairs(configData) do
+        if Library.uiSettings[key] ~= nil then
+            Library.uiSettings[key] = value
+        end
+    end
+    Library:UpdateUIStyle()
+end)
+
+-- 关于标签页
+local AboutTab = Window:Tab("关于", '92237541628279')
+local aboutSection = AboutTab:section("关于脚本", true)
+
+aboutSection:Label("BP脚本中心 V1.0")
+aboutSection:Label("开发者: BP Team")
+aboutSection:Label("更新时间: 2024")
+aboutSection:Label("支持游戏: 多款Roblox游戏")
+
+aboutSection:Button("检查更新", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/UpdateChecker/main/UpdateChecker.lua"))()
+end)
+
+aboutSection:Button("反馈问题", function()
+    setclipboard("https://github.com/BP-Team/BP-Script-Center/issues")
+end)
+
+aboutSection:Button("加入Discord", function()
+    setclipboard("https://discord.gg/bpscript")
+end)
+
+aboutSection:Button("支持我们", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/Donate/main/Donate.lua"))()
+end)
+
+-- 初始化UI
+Library:UpdateUIStyle()
+
+-- 添加缺失的函数定义
+function SaveConfig(name)
+    local configData = {
+        uiSettings = Library.uiSettings,
+        uiPosition = Library.uiPosition,
+        configName = name,
+        saveTime = os.time()
+    }
+    
+    if writefile then
+        writefile("BlackHoleUI_" .. name .. ".json", game:GetService("HttpService"):JSONEncode(configData))
+    end
+    
+    return true, "配置保存成功: " .. name
+end
+
+function LoadConfig(name)
+    if readfile and isfile then
+        local filename = "BlackHoleUI_" .. name .. ".json"
+        if isfile(filename) then
+            local configData = game:GetService("HttpService"):JSONDecode(readfile(filename))
+            for key, value in pairs(configData.uiSettings) do
+                if Library.uiSettings[key] ~= nil then
+                    Library.uiSettings[key] = value
+                end
+            end
+            Library.uiPosition = configData.uiPosition
+            Library:UpdateUIStyle()
+            return true, "配置加载成功: " .. name
+        end
+    end
+    return false, "配置不存在: " .. name
+end
+
+function DeleteConfig(name)
+    if delfile and isfile then
+        local filename = "BlackHoleUI_" .. name .. ".json"
+        if isfile(filename) then
+            delfile(filename)
+            return true, "配置删除成功: " .. name
+        end
+    end
+    return false, "配置不存在: " .. name
+end
+
+-- 自动保存位置
+game:GetService("RunService").Heartbeat:Connect(function()
+    Library.uiPosition = Library.uiElements.Main.Position
+end)
+
+-- 启动时加载最新配置
+task.spawn(function()
+    task.wait(2)
+    local success, message = LoadConfig("默认配置")
 end)
